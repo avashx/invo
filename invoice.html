@@ -637,7 +637,7 @@
             <tbody>
                 <tr>
                     <td>Base Fare</td>
-                    <td id="baseFare">13.85</td>
+                    <td id="baseFare">15.00</td>
                 </tr>
                 <tr>
                     <td>Toll</td>
@@ -649,14 +649,14 @@
                 </tr>
                 <tr>
                     <td>Total Fare</td>
-                    <td id="totalFare">13.85</td>
+                    <td id="totalFare">15.00</td>
                 </tr>
                 <tr>
                     <td colspan="2"><hr /></td>
                 </tr>
                 <tr>
                     <td>Discount</td>
-                    <td id="discount">- 1.5</td>
+                    <td id="discount">- 1.15</td>
                 </tr>
                 <tr>
                     <td>Convenience Fee</td>
@@ -1070,9 +1070,9 @@
             
             // Check if AC or Non-AC is selected
             const isAC = document.getElementById('ac').checked;
-            const baseFarePerTicket = isAC ? 25 : 13.85;
+            const baseFarePerTicket = isAC ? 25 : 15;
             
-            const discount = isAC ? 2.15 : 1.5;
+            const discount = isAC ? 2.15 : 1.15;
             const convenienceFee = 0.35;
             
             const totalFare = baseFarePerTicket * passengers;
