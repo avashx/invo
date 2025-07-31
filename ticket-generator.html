@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTC Ticket Generator - Updated</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script>
+    <style>
+        @font-face {
+            font-family: 'alo';
+            src: url('alo.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+            font-family: 'alo', Arial, sans-serif;
+            display: flex;
+            gap: 20px;
+        }
+
+        .controls-panel {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .ticket-preview {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .ticket-container {
+            position: relative;
+            width: 350px;
+            height: 500px;
+            background-image: url('blank-ticket.JPG');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-position: center;
+            border: 1px solid #ccc;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .ticket-field {
+            position: absolute;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: 'alo', Arial, sans-serif;
+            color: #333;
+            padding: 2px;
+        }
+
+        /* Route Number */
+        .route-number {
+            top: 118px;
+            left: 25px;
+            width: 300px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        /* From Location */
+        .from-location {
+            top: 158px;
+            left: 25px;
+            width: 120px;
+            font-size: 11px;
+        }
+
+        /* To Location */
+        .to-location {
+            top: 158px;
+            left: 180px;
+            width: 120px;
+            font-size: 11px;
+        }
+
+        /* Passengers */
+        .passengers {
+            top: 198px;
+            left: 25px;
+            width: 40px;
+            font-size: 11px;
+        }
+
+        /* Fare */
+        .fare {
+            top: 198px;
+            left: 180px;
+            width: 80px;
+            font-size: 11px;
+        }
+
+        /* Ticket Number */
+        .ticket-number {
+            top: 238px;
+            left: 25px;
+            width: 140px;
+            font-size: 9px;
+        }
+
+        /* Valid Date */
+        .valid-date {
+            top: 238px;
+            left: 180px;
+            width: 100px;
+            font-size: 9px;
+        }
+
+        /* Booking ID */
+        .booking-id {
+            top: 278px;
+            left: 25px;
+            width: 140px;
+            font-size: 9px;
+        }
+
+        /* Bus Number */
+        .bus-number {
+            top: 278px;
+            left: 180px;
+            width: 100px;
+            font-size: 9px;
+        }
+
+        /* Transaction ID */
+        .transaction-id {
+            top: 318px;
+            left: 25px;
+            width: 200px;
+            font-size: 9px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .quick-routes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .quick-route-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .quick-route-btn:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls-panel">
+        <h3>DTC Ticket Generator</h3>
+        
+        <div class="form-group">
+            <label for="routeNumber">Route Number:</label>
+            <input type="text" id="routeNumber" value="821DOWN" placeholder="Enter route number">
+        </div>
+
+        <div class="form-group">
+            <label for="fromLocation">From:</label>
+            <input type="text" id="fromLocation" value="Jaffar Pur Kalan" placeholder="Source location">
+        </div>
+
+        <div class="form-group">
+            <label for="toLocation">To:</label>
+            <input type="text" id="toLocation" value="Arjun Park" placeholder="Destination location">
+        </div>
+
+        <div class="form-group">
+            <label for="passengers">Passengers:</label>
+            <input type="number" id="passengers" value="1" min="1" max="10">
+        </div>
+
+        <div class="form-group">
+            <label for="fare">Fare (₹):</label>
+            <input type="text" id="fare" value="₹ 13.85" placeholder="Fare amount">
+        </div>
+
+        <div class="form-group">
+            <label for="busNumber">Bus Number:</label>
+            <input type="text" id="busNumber" value="DL1PD985" placeholder="Bus registration number">
+        </div>
+
+        <div class="form-group">
+            <label for="validDate">Valid Date:</label>
+            <input type="text" id="validDate" readonly placeholder="Valid date">
+        </div>
+
+        <div class="quick-routes">
+            <button class="quick-route-btn" onclick="setRoute('827UP', 'Arjun Park', 'Jaffar Pur Kalan')">827UP</button>
+            <button class="quick-route-btn" onclick="setRoute('628STLUp', 'Arjun Park', 'Jaffar Pur Kalan')">628STLUp</button>
+            <button class="quick-route-btn" onclick="setRoute('835UP', 'Arjun Park', 'Rawta Crossing')">835UP</button>
+            <button class="quick-route-btn" onclick="setRoute('821DOWN', 'Jaffar Pur Kalan', 'Arjun Park')">821DOWN</button>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="btn btn-success" onclick="generateTicket()">Generate Ticket</button>
+            <button class="btn" onclick="downloadTicket()">Download PNG</button>
+            <button class="btn" onclick="randomizeData()">Random Data</button>
+        </div>
+    </div>
+
+    <div class="ticket-preview">
+        <div id="ticketContainer" class="ticket-container">
+            <!-- Route Number -->
+            <input type="text" class="ticket-field route-number" id="ticketRouteNumber">
+            
+            <!-- From Location -->
+            <input type="text" class="ticket-field from-location" id="ticketFromLocation">
+            
+            <!-- To Location -->
+            <input type="text" class="ticket-field to-location" id="ticketToLocation">
+            
+            <!-- Passengers -->
+            <input type="text" class="ticket-field passengers" id="ticketPassengers">
+            
+            <!-- Fare -->
+            <input type="text" class="ticket-field fare" id="ticketFare">
+            
+            <!-- Ticket Number -->
+            <input type="text" class="ticket-field ticket-number" id="ticketNumber">
+            
+            <!-- Valid Date -->
+            <input type="text" class="ticket-field valid-date" id="ticketValidDate">
+            
+            <!-- Booking ID -->
+            <input type="text" class="ticket-field booking-id" id="ticketBookingId">
+            
+            <!-- Bus Number -->
+            <input type="text" class="ticket-field bus-number" id="ticketBusNumber">
+            
+            <!-- Transaction ID -->
+            <input type="text" class="ticket-field transaction-id" id="ticketTransactionId">
+        </div>
+    </div>
+
+    <script>
+        // Initialize with current date
+        function initializeDate() {
+            const currentDate = new Date();
+            const day = String(currentDate.getDate()).padStart(2, '0');
+            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+            const year = currentDate.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`;
+            
+            document.getElementById('validDate').value = formattedDate;
+            updateTicketFields();
+        }
+
+        // Generate random strings for ticket/booking/transaction IDs
+        function generateRandomString(length, numbersOnly = false) {
+            const chars = numbersOnly ? '0123456789' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        // Generate ticket data
+        function generateTicket() {
+            const ticketNo = 'T' + generateRandomString(12, true);
+            const bookingId = generateRandomString(12, true);
+            const transactionId = 'dtc-' + generateRandomString(15);
+            
+            document.getElementById('ticketNumber').value = ticketNo;
+            document.getElementById('ticketBookingId').value = bookingId;
+            document.getElementById('ticketTransactionId').value = transactionId;
+            
+            updateTicketFields();
+        }
+
+        // Update all ticket fields from form inputs
+        function updateTicketFields() {
+            document.getElementById('ticketRouteNumber').value = document.getElementById('routeNumber').value;
+            document.getElementById('ticketFromLocation').value = document.getElementById('fromLocation').value;
+            document.getElementById('ticketToLocation').value = document.getElementById('toLocation').value;
+            document.getElementById('ticketPassengers').value = document.getElementById('passengers').value;
+            document.getElementById('ticketFare').value = document.getElementById('fare').value;
+            document.getElementById('ticketBusNumber').value = document.getElementById('busNumber').value;
+            document.getElementById('ticketValidDate').value = document.getElementById('validDate').value;
+        }
+
+        // Set quick route data
+        function setRoute(route, from, to) {
+            document.getElementById('routeNumber').value = route;
+            document.getElementById('fromLocation').value = from;
+            document.getElementById('toLocation').value = to;
+            updateTicketFields();
+        }
+
+        // Randomize all data
+        function randomizeData() {
+            const routes = ['827UP', '628STLUp', '835UP', '821DOWN', '844UP', '968UP'];
+            const buses = ['DL1PD985', 'DL1PC123', 'DL1PA456', 'DL1PB789', 'DL1PE321'];
+            const fares = ['₹ 13.85', '₹ 15.00', '₹ 12.50', '₹ 18.25', '₹ 20.00'];
+            
+            document.getElementById('routeNumber').value = routes[Math.floor(Math.random() * routes.length)];
+            document.getElementById('busNumber').value = buses[Math.floor(Math.random() * buses.length)];
+            document.getElementById('fare').value = fares[Math.floor(Math.random() * fares.length)];
+            
+            generateTicket();
+        }
+
+        // Download ticket as PNG
+        function downloadTicket() {
+            const node = document.getElementById('ticketContainer');
+            domtoimage.toPng(node, {
+                width: node.clientWidth * 2,
+                height: node.clientHeight * 2,
+                style: {
+                    transform: 'scale(2)',
+                    transformOrigin: 'top left'
+                }
+            }).then(function(dataUrl) {
+                const link = document.createElement('a');
+                link.download = `DTC-Ticket-${Date.now()}.png`;
+                link.href = dataUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }).catch(function(error) {
+                console.error('Error generating image:', error);
+            });
+        }
+
+        // Event listeners for real-time updates
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeDate();
+            generateTicket();
+            
+            // Add event listeners to form inputs
+            const inputs = ['routeNumber', 'fromLocation', 'toLocation', 'passengers', 'fare', 'busNumber', 'validDate'];
+            inputs.forEach(inputId => {
+                document.getElementById(inputId).addEventListener('input', updateTicketFields);
+            });
+        });
+    </script>
+</body>
+</html>
