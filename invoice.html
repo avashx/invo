@@ -47,7 +47,7 @@
         }
 
         .app-logo {
-            height: 60px;
+            height: 35px;
             margin-bottom: 10px;
         }
 
@@ -81,41 +81,41 @@
         }
 
         .card-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: var(--color-black);
-            margin: 0 0 20px 0;
+            margin: 0 0 16px 0;
             text-align: center;
         }
 
         .form-row {
             display: flex;
-            gap: 16px;
-            margin-bottom: 20px;
+            gap: 12px;
+            margin-bottom: 16px;
             flex-wrap: wrap;
         }
 
         .form-group {
             flex: 1;
-            min-width: 200px;
+            min-width: 160px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 500;
             color: var(--color-black);
-            font-size: 14px;
+            font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .form-group input, .form-group select {
             width: 100%;
-            padding: 14px 16px;
+            padding: 10px 12px;
             border: 2px solid #e9ecef;
-            border-radius: 12px;
-            font-size: 16px;
+            border-radius: 8px;
+            font-size: 14px;
             background: white;
             color: var(--color-black);
             transition: all var(--transition-fast) ease;
@@ -228,14 +228,14 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 16px 0;
             border-radius: 12px;
             overflow: hidden;
             border: 1px solid #e9ecef;
         }
 
         th, td {
-            padding: 16px;
+            padding: 10px 12px;
             text-align: left;
             border-bottom: 1px solid #f1f3f4;
         }
@@ -245,13 +245,14 @@
             font-weight: 600;
             color: var(--color-black);
             text-transform: uppercase;
-            font-size: 12px;
+            font-size: 11px;
             letter-spacing: 0.5px;
         }
 
         td {
             color: var(--color-black);
             font-weight: 500;
+            font-size: 14px;
         }
 
         tr:last-child td {
@@ -391,6 +392,15 @@
             font-size: 15px;
         }
 
+        /* Bus Type (AC/Non-AC) */
+        .bus-type {
+            top: 360px;
+            left: 200px;
+            width: 80px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
         .preview-image {
             max-width: 280px;
             max-height: 400px;
@@ -434,6 +444,56 @@
             margin: 20px 0;
         }
 
+        /* Compact configuration card styles */
+        .config-card {
+            padding: 18px !important;
+            margin-bottom: 16px !important;
+        }
+
+        .config-card .card-title {
+            font-size: 14px;
+            margin: 0 0 12px 0;
+            color: var(--color-gray-medium);
+        }
+
+        .config-card .form-row {
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .config-card .form-group {
+            min-width: 140px;
+        }
+
+        .config-card .form-group label {
+            font-size: 11px;
+            margin-bottom: 4px;
+        }
+
+        .config-card .form-group input {
+            padding: 8px 10px;
+            font-size: 13px;
+            border-radius: 6px;
+        }
+
+        /* Smaller route option buttons */
+        .route-btn {
+            padding: 10px 16px !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            margin: 4px 2px !important;
+            max-width: 120px !important;
+            border-radius: 8px !important;
+            letter-spacing: 0.3px !important;
+        }
+
+        .route-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 8px;
+            margin: 16px 0;
+        }
+
         /* Mobile-specific styles */
         @media (max-width: 768px) {
             body {
@@ -445,15 +505,30 @@
                 margin-bottom: 16px;
                 border-radius: 12px;
             }
+
+            .config-card {
+                padding: 14px !important;
+                margin-bottom: 12px !important;
+            }
             
             .form-row {
                 flex-direction: column;
-                gap: 12px;
+                gap: 8px;
+            }
+
+            .config-card .form-row {
+                gap: 6px;
+                margin-bottom: 10px;
             }
             
             .form-group {
                 min-width: 100%;
-                margin-bottom: 12px;
+                margin-bottom: 8px;
+            }
+
+            .config-card .form-group {
+                min-width: 100%;
+                margin-bottom: 6px;
             }
             
             .ticket-container {
@@ -468,6 +543,18 @@
                 max-width: none;
                 margin: 6px 0;
             }
+
+            .route-btn {
+                max-width: none !important;
+                padding: 8px 12px !important;
+                font-size: 11px !important;
+                margin: 3px 0 !important;
+            }
+
+            .route-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
             
             .InputGroup {
                 width: 100%;
@@ -480,8 +567,8 @@
             }
             
             th, td {
-                padding: 12px 8px;
-                font-size: 14px;
+                padding: 8px 6px;
+                font-size: 13px;
             }
         }
 
@@ -528,7 +615,18 @@
     
     <!-- Fare Breakdown Table -->
     <div class="card">
-        <div class="card-title">Fare Breakdown</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="card-title" style="margin: 0;">Fare Breakdown</div>
+            
+            <!-- AC/Non-AC Toggle -->
+            <div class="InputGroup" style="width: 160px; height: 35px; margin: 0;">
+                <input type="radio" checked="checked" id="non-ac" value="non-ac" name="bus-type">
+                <label for="non-ac" style="font-size: 12px;">Non-AC</label>
+                
+                <input type="radio" id="ac" value="ac" name="bus-type">
+                <label for="ac" style="font-size: 12px;">AC</label>
+            </div>
+        </div>
         <table>
             <thead>
                 <tr>
@@ -539,7 +637,7 @@
             <tbody>
                 <tr>
                     <td>Base Fare</td>
-                    <td id="baseFare">15</td>
+                    <td id="baseFare">13.85</td>
                 </tr>
                 <tr>
                     <td>Toll</td>
@@ -551,7 +649,7 @@
                 </tr>
                 <tr>
                     <td>Total Fare</td>
-                    <td id="totalFare">15</td>
+                    <td id="totalFare">13.85</td>
                 </tr>
                 <tr>
                     <td colspan="2"><hr /></td>
@@ -602,10 +700,10 @@
         <div style="text-align: center; margin-bottom: 20px;">
             <div style="font-weight: 600; color: var(--color-black); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Select Route</div>
             
-            <div class="action-grid">
-                <button class="btn btn-outline" onclick="f827UP()">827UP</button>
-                <button class="btn btn-outline" onclick="f628STLUp()">628STLUp</button>
-                <button class="btn btn-outline" onclick="f835UP()">835UP</button>
+            <div class="route-grid">
+                <button class="btn btn-outline route-btn" onclick="f827UP()">827UP</button>
+                <button class="btn btn-outline route-btn" onclick="f628STLUp()">628STLUp</button>
+                <button class="btn btn-outline route-btn" onclick="f835UP()">835UP</button>
             </div>
         </div>
         
@@ -657,28 +755,31 @@
                 
                 <!-- Transaction ID -->
                 <input type="text" class="ticket-field transaction-id" id="ticketTransactionId">
+                
+                <!-- Bus Type -->
+                <input type="text" class="ticket-field bus-type" id="ticketBusType">
             </div>
         </div>
     </div>
 
     <!-- Controls Panel at the bottom -->
-    <div class="card">
-        <div class="card-title">Ticket Configuration</div>
+    <div class="card config-card">
+        <div class="card-title">Configuration</div>
         
         <div class="form-row">
             <div class="form-group">
-                <label for="routeNumber">Route Number</label>
-                <input type="text" id="routeNumber" value="821DOWN" placeholder="Enter route number">
+                <label for="routeNumber">Route</label>
+                <input type="text" id="routeNumber" value="821DOWN" placeholder="Route number">
             </div>
             
             <div class="form-group">
                 <label for="fromLocation">From</label>
-                <input type="text" id="fromLocation" value="Jaffar Pur Kalan" placeholder="Source location">
+                <input type="text" id="fromLocation" value="Jaffar Pur Kalan" placeholder="Source">
             </div>
             
             <div class="form-group">
                 <label for="toLocation">To</label>
-                <input type="text" id="toLocation" value="Arjun Park" placeholder="Destination location">
+                <input type="text" id="toLocation" value="Arjun Park" placeholder="Destination">
             </div>
         </div>
 
@@ -689,20 +790,20 @@
             </div>
             
             <div class="form-group">
-                <label for="fare">Fare (₹)</label>
-                <input type="text" id="fare" value="₹ 13.85" placeholder="Fare amount">
+                <label for="fare">Fare</label>
+                <input type="text" id="fare" value="₹ 13.85" placeholder="Amount">
             </div>
             
             <div class="form-group">
-                <label for="busNumber">Bus Number</label>
-                <input type="text" id="busNumber" value="DL1PD985" placeholder="Bus registration number">
+                <label for="busNumber">Bus No.</label>
+                <input type="text" id="busNumber" value="DL1PD985" placeholder="Bus number">
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
                 <label for="validDate">Valid Date</label>
-                <input type="text" id="validDate" readonly placeholder="Valid date">
+                <input type="text" id="validDate" readonly placeholder="Date">
             </div>
         </div>
     </div>
@@ -710,7 +811,7 @@
     <!-- Footer -->
     <div style="text-align: center; margin: 40px 0 20px 0; color: var(--color-gray-medium); font-size: 14px;">
         <div style="margin-bottom: 10px; font-weight: 500;">DTC Ticket Generator</div>
-        <a href="book.html" style="color: var(--color-black); text-decoration: none; font-weight: 500;">← Back to Invoice</a>
+        <a href="index.html" style="color: var(--color-black); text-decoration: none; font-weight: 500;">← Back to Home</a>
     </div>
 
     <script>
@@ -776,6 +877,10 @@
             document.getElementById('ticketFare').value = document.getElementById('fare').value;
             document.getElementById('ticketBusNumber').value = document.getElementById('busNumber').value;
             document.getElementById('ticketValidDate').value = document.getElementById('validDate').value;
+            
+            // Update bus type field
+            const isAC = document.getElementById('ac').checked;
+            document.getElementById('ticketBusType').value = isAC ? 'AC' : 'Non-AC';
         }
 
         // Update form inputs from ticket fields (reverse sync)
@@ -901,6 +1006,18 @@
 
         // Event listeners for real-time updates
         document.addEventListener('DOMContentLoaded', function() {
+            // Check for bus number parameter in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const busNumber = urlParams.get('busNumber');
+            console.log('URL parameters:', window.location.search);
+            console.log('Bus number from URL:', busNumber);
+            
+            if (busNumber) {
+                console.log('Setting bus number to:', busNumber);
+                document.getElementById('busNumber').value = busNumber;
+                document.getElementById('ticketBusNumber').value = busNumber;
+            }
+
             initializeDate();
             generateTicket();
             
@@ -911,7 +1028,7 @@
             });
 
             // Add event listeners to ticket fields (ticket to control panel)
-            const ticketFields = ['ticketRouteNumber', 'ticketFromLocation', 'ticketToLocation', 'ticketPassengers', 'ticketFare', 'ticketBusNumber', 'ticketValidDate'];
+            const ticketFields = ['ticketRouteNumber', 'ticketFromLocation', 'ticketToLocation', 'ticketPassengers', 'ticketFare', 'ticketBusNumber', 'ticketValidDate', 'ticketBusType'];
             ticketFields.forEach(fieldId => {
                 document.getElementById(fieldId).addEventListener('input', updateFormFields);
             });
@@ -923,6 +1040,14 @@
                     if (this.checked) {
                         changeBackground(this.value);
                     }
+                });
+            });
+
+            // Add event listeners for AC/Non-AC toggle
+            const busTypeButtons = document.querySelectorAll('input[name="bus-type"]');
+            busTypeButtons.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    updateFareTable();
                 });
             });
 
@@ -939,20 +1064,24 @@
             ticketContainer.style.backgroundImage = backgroundUrl;
         }
 
-        // Function to update fare breakdown table based on passengers
+        // Function to update fare breakdown table based on passengers and bus type
         function updateFareTable() {
             const passengers = parseInt(document.getElementById('passengers').value) || 1;
-            const baseFarePerTicket = 15;
-            const discount = 1.5;
+            
+            // Check if AC or Non-AC is selected
+            const isAC = document.getElementById('ac').checked;
+            const baseFarePerTicket = isAC ? 25 : 13.85;
+            
+            const discount = isAC ? 2.15 : 1.5;
             const convenienceFee = 0.35;
             
             const totalFare = baseFarePerTicket * passengers;
             const grandTotal = totalFare - discount + convenienceFee;
             
             // Update table values
-            document.getElementById('baseFare').textContent = baseFarePerTicket;
+            document.getElementById('baseFare').textContent = baseFarePerTicket.toFixed(2);
             document.getElementById('ticketCount').textContent = passengers;
-            document.getElementById('totalFare').textContent = totalFare;
+            document.getElementById('totalFare').textContent = totalFare.toFixed(2);
             document.getElementById('discount').textContent = `- ${discount}`;
             document.getElementById('convenienceFee').textContent = `+ ${convenienceFee}`;
             document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);

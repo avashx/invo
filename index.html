@@ -95,7 +95,7 @@ a {
                 </h4>
             
 
-                <form method="POST" action="book.html">
+                <form method="POST" action="invoice.html">
                   <div  >
                     <div class="row justify-content-start"  >
                       <div class="col-4"  >
@@ -161,27 +161,56 @@ a {
       let source = document.querySelector('#otp_field');  
        let target = document.querySelector('#outn');  
         source.addEventListener('change', function () {  
-            
-            
+            updateBusNumber();
+       });
 
+       source.addEventListener('input', function () {  
+            updateBusNumber();
+       });
+
+       function updateBusNumber() {
             var ele = document.getElementsByName('ch');
+            var tpa = "";
  
             for (i = 0; i < ele.length; i++) {
                 if (ele[i].checked)
                 var tpa = "" + ele[i].value;
             }
         
-
-let fin = this.value; 
+            let fin = source.value; 
             let plate = tpa + fin;
             target.textContent = plate;
-               console.log( plate);
+            console.log( plate);
 
-var busn = plate;
-sessionStorage.setItem("busn", busn);
+            var busn = plate;
+            sessionStorage.setItem("busn", busn);
+       }
 
+       // Handle form submission to redirect to invoice.html with bus number
+       document.querySelector('form').addEventListener('submit', function(e) {
+           e.preventDefault();
+           
+           // Make sure we have the latest bus number
+           updateBusNumber();
+           
+           var busNumber = document.getElementById('outn').textContent;
+           console.log('Bus number being passed:', busNumber);
+           
+           if (busNumber && busNumber.trim() !== '') {
+               window.location.href = 'invoice.html?busNumber=' + encodeURIComponent(busNumber);
+           } else {
+               alert('Please select a bus prefix and enter the number');
+           }
+       });
 
-       });  
+       // Also update bus number when radio buttons change
+       document.querySelectorAll('input[name="ch"]').forEach(function(radio) {
+           radio.addEventListener('change', function() {
+               if (source.value) {
+                   updateBusNumber();
+               }
+           });
+       });
 
     </script>  
 
