@@ -660,7 +660,7 @@
                 </tr>
                 <tr>
                     <td>Convenience Fee</td>
-                    <td id="convenienceFee">+ 0.35</td>
+                    <td id="convenienceFee">+ 0</td>
                 </tr>
                 <tr>
                     <td colspan="2"><hr /></td>
@@ -1073,7 +1073,7 @@
             const baseFarePerTicket = isAC ? 25 : 15;
             
             const discount = isAC ? 2.15 : 1.15;
-            const convenienceFee = 0.35;
+            const convenienceFee = isAC ? 0.35 : 0;
             
             const totalFare = baseFarePerTicket * passengers;
             const grandTotal = totalFare - discount + convenienceFee;
@@ -1083,7 +1083,7 @@
             document.getElementById('ticketCount').textContent = passengers;
             document.getElementById('totalFare').textContent = totalFare.toFixed(2);
             document.getElementById('discount').textContent = `- ${discount}`;
-            document.getElementById('convenienceFee').textContent = `+ ${convenienceFee}`;
+            document.getElementById('convenienceFee').textContent = `+ ${convenienceFee.toFixed(2)}`;
             document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
             
             // Update fare input field
