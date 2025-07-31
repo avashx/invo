@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Payment</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            //display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 2px;
+            position: relative;
+        }
+
+        .cancel-btn {
+            top: 10px;
+            left: 10px;
+            font-size: 16px;
+            background: none;
+            border: none;
+            color: #000;
+            cursor: pointer;
+        }
+
+        .header {
+            text-align: center;
+            display:flex;
+            margin-bottom: 5px;
+            margin-top: 20px;
+
+        }
+
+        .header h2 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .header img {
+            width: 50px;
+            display: block;
+            margin-left: 200px;
+        }
+
+        .details {
+            background: #dee1e5;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .details p {
+            margin: 5px 0;
+            font-size: 12px;
+        }
+
+        .details span {
+            font-weight: bold;
+        }
+
+        .pin-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pin-input {
+            display: flex;
+            justify-content: center;
+            gap: 13px;
+            margin-top: 10px;
+        }
+
+        .pin-input input {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid #043263;
+            text-align: center;
+            font-size: 20px;
+            outline: none;
+            pointer-events: none;
+            background-color: #f9f9f9;
+            transition: background-color 0.3s;
+        }
+
+        .pin-input input.filled {
+            background-color: #043263;
+            color: #043263;
+        }
+
+        .keyboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .key {
+            width: 100%;
+            height: 60px;
+            font-size: 20px;
+            background-color: #ffffff00;
+            color: #333;
+            border: 1px solid #ddd;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .key:hover {
+            background-color: #e2e6ea;
+        }
+
+
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 10px;
+            border: 1px solid #ffeeba;
+            border-radius: 5px;
+            font-size: 14px;
+            margin: 20px;
+            margin-top: 60px;
+            margin-bottom: 80px;
+
+
+
+            display: flex;
+            align-items: center;
+        }
+
+        .warning img {
+            width: 20px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="cancel-btn">CANCEL</button>
+        <div class="header">
+            <h5>Federal Bank <br><b>XXXX3996</b></h5>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/UPI-Logo-vector.svg" alt="UPI Logo">
+        </div>
+
+        <div class="details">
+            <p>To: <span>Delhi Transport Corporation</span></p>
+            <p>Sending: ₹<span>13.85</span></p>
+        </div>
+
+        <div class="pin-section">
+            <label for="pin">Enter 4-digit UPI PIN</label>
+            <div class="pin-input">
+                <input type="password" maxlength="1" id="pin-1">
+                <input type="password" maxlength="1" id="pin-2">
+                <input type="password" maxlength="1" id="pin-3">
+                <input type="password" maxlength="1" id="pin-4">
+            </div>
+        </div>
+
+        <div class="warning">
+            <img src="https://cdn-icons-png.flaticon.com/512/6897/6897039.png" alt="Warning">
+            <span>You are sending ₹13.85 from your account to DELHI TRANSPORT CORPORATION.</span>
+        </div>
+
+        <div class="keyboard">
+            <div class="key" onclick="addDigit('1')">1</div>
+            <div class="key" onclick="addDigit('2')">2</div>
+            <div class="key" onclick="addDigit('3')">3</div>
+            <div class="key" onclick="addDigit('4')">4</div>
+            <div class="key" onclick="addDigit('5')">5</div>
+            <div class="key" onclick="addDigit('6')">6</div>
+            <div class="key" onclick="addDigit('7')">7</div>
+            <div class="key" onclick="addDigit('8')">8</div>
+            <div class="key" onclick="addDigit('9')">9</div>
+            <div class="key" onclick="deleteDigit()">←</div>
+            <div class="key" onclick="addDigit('0')">0</div>
+            <div class="key" onclick="processPayment()"><h6>SUBMIT</h6></div>
+        </div>
+    </div>
+
+    <script>
+        let currentInputIndex = 0;
+
+        function addDigit(digit) {
+            const inputs = document.querySelectorAll(".pin-input input");
+            if (currentInputIndex < inputs.length) {
+                inputs[currentInputIndex].value = digit;
+                inputs[currentInputIndex].classList.add("filled");
+                currentInputIndex++;
+            }
+        }
+
+        function deleteDigit() {
+            const inputs = document.querySelectorAll(".pin-input input");
+            if (currentInputIndex > 0) {
+                currentInputIndex--;
+                inputs[currentInputIndex].value = "";
+                inputs[currentInputIndex].classList.remove("filled");
+            }
+        }
+
+        function processPayment() {
+            const inputs = document.querySelectorAll(".pin-input input");
+            let pin = "";
+            inputs.forEach(input => {
+                pin += input.value;
+            });
+
+            if (pin.length === 4) {
+                alert(`Payment of ₹13.85 has been processed!`);
+            } else {
+                alert("Please enter all 4 digits of your PIN.");
+            }
+
+             setTimeout(myURL, 1000);
+         
+
+      function myURL() {
+         document.location.href = 'http://dtc.rf.gd/book.html';
+      }
+        }
+    </script>
+</body>
+</html>

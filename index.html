@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+
+<html lang="en">
+ 
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="icon" href="https://dtc.pelocal.net/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="DTC">
+    <link rel="apple-touch-icon" href="https://dtc.pelocal.net/cb/book-by-qr/OFRqOWp2Q1B5UW51OGo5Z3ZUTk15Y1paMVJleGpRU2ZlWkJhQ1gyOWUydW1uYVZZRDg4ZzBKcjJScjd2eGE5TWNGdlBLK3QwRS9hNUJmY1NiR3J2QkE9PQ/logo192.png">
+    <title>DTC-Ticket Booking</title>
+    <!-- Placeholder for React build CSS -->
+    <link id="react-css" rel="stylesheet" href="./DTC-Ticket Booking_files/main.d65b6151.css">
+    
+    <style>
+    .rbutton {
+
+  width: 80px;
+  position: relative;
+  color:white;
+   margin: 0 5px 0 0;
+}
+
+.rbutton label,
+.rbutton input {
+  display: block;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+    background: rgb(108, 117, 125);
+
+}
+a {
+  text-decoration: none;
+}
+.rbutton input[type="radio"] {
+  opacity: 0.011;
+  z-index: 100;
+   
+
+}
+
+.rbutton input[type="radio"]:checked + label {
+  background: rgb(220 53 69);
+ 
+  border-radius: 4px;
+}
+
+.rbutton label {
+  cursor: pointer;
+  z-index: 90;
+  color:white;
+    font-weight:90px;
+
+}
+</style>
+  </head>
+  <body>
+    <div id=""  >
+      <div class="App"  >
+        <div class="container-sm"  >
+          <main>
+            <div class="row my-2"  >
+              <div class="col-12"  >
+                <div class="card logo-box p-2"  >
+                 <img src="./DTC-Ticket Booking_files/dtcImage.png" alt="DMRC Logo">
+                </div>
+              </div>
+            </div>
+            <div class="row"  >
+              <div class="gap-2"  >
+                <div class="container"  >
+                  <div class="row justify-content-center"  >
+                    <div class="col-6 text-center"  >
+                      <div  >
+                        <h5 type="button" class="btn btn-success py-1 px-3">
+                          <span class="badge badge-success" style="font-size: 15px;">
+                        
+                              <form method="POST" action="canva.html">
+                             <button type="submit" class="btn btn-success py-1 px-3">Open Scanner</button></form>
+                          </span>
+                        </h5>
+                      </div>
+                    </div>
+                    <div class="col-12"  ></div>
+                  </div>
+                </div>
+                <div class="section-divider"  >
+                  <span>OR</span>
+                </div>
+                <h4 class="text-center mb-1">
+                  <b>Enter Bus Number</b>
+                </h4>
+            
+
+                <form method="POST" action="book.html">
+                  <div  >
+                    <div class="row justify-content-start"  >
+                      <div class="col-4"  >
+                        <h5 class="text-center">
+                          <div class="rbutton">
+                            <input type="radio" value="DL1PB" id="pb" name="ch" />
+                            <label class="btn " for="pb"><b>DL1PB</b></label> 
+                            </div>
+                                                    </h5>
+                      </div>
+                      <div class="col-4"  >
+                        <h5 class="text-center">
+                          <div class="rbutton">
+                        <input type="radio" value="DL1PC" id="1pd" name="ch" />
+                        <label class="btn " for="1pd"><b>DL1PC</b></label> 
+                        </div>
+                        </h5>
+                      </div>
+                      <div class="col-4"  >
+                        <h5 class="text-center">
+                          <div class="rbutton">
+                        <input type="radio" value="DL1PD" id="pd" name="ch" />
+                        <label class="btn " for="pd"><b>DL1PD</b></label> 
+                        </div>
+                        </h5>
+                      </div>
+                      <div class="col-4"  >
+                        <h5 class="text-center">
+                          <div class="rbutton">
+                        <input type="radio" value="DL51GD" id="gd" name="ch" />
+                        <label class="btn " for="gd"><b>DL51GD</b></label> 
+                        </div>
+                        </h5>
+                      </div>
+                      <div class="col-4"  >
+                        <h5 class="text-center">
+                        <div class="rbutton">
+                        <input type="radio" value="DL51EV" id="ev" name="ch" />
+                        <label class="btn " for="ev"><b>DL51EV</b></label> 
+                        </div>
+                        </h5>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="text-center mt-2"  >
+                    <input type="text" class="input-number-value" id="otp_field" value="" style="width: 120px; border-radius: 0px; appearance: none; border: 0px;">
+                  </div><h3 id="outn" class="text-danger text-center m-2"></h3>
+                  <div class="d-grid mt-2"  >
+                    <button type="submit" class="btn btn-dark-updated text-white btn btn-primary">Submit</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+    <!-- Placeholder for React build JS -->
+   <br><br>
+    
+
+    <script>  
+      let source = document.querySelector('#otp_field');  
+       let target = document.querySelector('#outn');  
+        source.addEventListener('change', function () {  
+            
+            
+
+            var ele = document.getElementsByName('ch');
+ 
+            for (i = 0; i < ele.length; i++) {
+                if (ele[i].checked)
+                var tpa = "" + ele[i].value;
+            }
+        
+
+let fin = this.value; 
+            let plate = tpa + fin;
+            target.textContent = plate;
+               console.log( plate);
+
+var busn = plate;
+sessionStorage.setItem("busn", busn);
+
+
+       });  
+
+    </script>  
+
+
+  </body>
+</html>

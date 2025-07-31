@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta name="viewport" content="width=device-width, initial-scale=0.8">
+
+
+    		<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.js"></script>
+
+    <title>Dynamic Invoice Generator</title>
+<style>
+
+@font-face {
+    font-family: 'alo';
+    src: url('alo.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+:root {
+      
+      --backg: url("cust.jpg"); /*Background */
+       --disp: hidden;
+       --reld:absolute;
+       --color-black: #232323;
+ --color-pink: #ff6393;
+ --color-dark-green: #8fccdd;
+ --color-purple: #342a47;
+ --color-blue: deepskyblue;
+ --color-gray: #525252;
+ --color-green: #8fccdd;
+ 
+ --transition-fast: 0.1s;
+      }
+a {
+    color: green;
+    text-decoration: none;
+}
+
+a:hover {
+    color: orange; 
+    text-decoration:none; 
+    cursor:pointer;  
+}
+
+textarea:focus, input{
+    outline: none;
+border: 1px solid white;
+  border: none;
+  			border: 0px inset grey;
+
+
+}
+
+
+.card{
+    box-shadow: 0 1px 1px 0 #0000001a;
+    border:1px solid var(--efefef,#f1eeee);
+  box-shadow:1px 2px 10px grey;
+      align-items: center;
+      padding:3%;
+
+
+}
+
+  .card::after{
+content: '';
+position: absolute;
+bottom: 0; left: 0;
+width: 100%; height: 24px;
+background: linear-gradient(-45deg, #f8f8f8 12px, transparent 0%), linear-gradient(45deg, #f8f8f8 12px, transparent 0%); background-size: 24px;    
+  }  
+  
+
+
+
+.canva{
+height:560px;
+      background:var(--backg) no-repeat ;
+overflow:hidden;
+width: 400px;
+}
+
+
+
+.bsn{
+    width: 200px;
+    height:100%;
+    margin-top: 127px;
+    margin-left: 30px;
+ font-family: Verdana, sans-serif;
+  font-weight: 850;
+  font-size:11px;
+  font-style: normal;
+  color:black;
+  background: transparent;
+
+}
+
+
+.frm{
+    width: 155px;
+    height:100%;
+    margin-top: 41px;
+        margin-left: 5px;
+ font-family: Times New Roman;
+  font-weight: 300;
+  font-size:17px;
+  font-style: normal;
+  color:black;
+    background: transparent;
+
+}
+
+.to{
+    width: 160px;
+    height:100%;
+    margin-top: 41px;
+        margin-left: 41px;
+ font-family: Times New Roman;
+  font-weight: 300;
+  font-size:17px;
+  font-style: normal;
+  color:black;
+    background: transparent;
+
+
+}
+
+.bt{
+    width: 155px;
+    height:100%;
+    margin-top: 68px;
+        margin-left: 5px;
+ font-family: Times New Roman;
+  font-weight: 350;
+  font-size:16px;
+  font-style: normal;
+  color:black;
+}
+
+
+.vd{
+    width: 130px;
+    height:100%;
+    margin-top: 68px;
+        margin-left: 42px;
+ font-family: Times New Roman;
+  font-weight: 350;
+  font-size:16px;
+  font-style: normal;
+  color:black;
+
+}
+
+.et{width: 153px;
+    height:100%;
+    margin-top: 21px;
+        margin-left: 222px;
+ font-family: Times New Roman;
+  font-weight: 350;
+  font-size:16px;
+  font-style: normal;
+  color:black;
+}
+.bn{
+    width: 130px;
+    height:100%;
+    margin-top: 20px;
+        margin-left: 220px;
+ font-family: Times New Roman;
+  font-weight: 350;
+  font-size:15px;
+  font-style: normal;
+  color:black;
+}
+
+.rf{
+    width: 270px;
+    height:100%;
+    margin-top: 31px;
+        margin-left: 6px;
+ font-family: Times New Roman;
+  font-weight: 350;
+  font-size:15px;
+  font-style: normal;
+  color:black;
+      background: transparent;
+
+}
+
+
+
+
+button {
+ border: 2px solid #0066CC;
+  background-color: white;
+  color: #0066CC;
+
+    display: block;
+    margin-top: 10px;
+    padding: 10px;
+    //background-color: #007bff;
+    //color: white;
+    height:95px;
+    width:205px;
+    //border: none;
+    cursor: pointer;
+}
+
+button:hover {
+  background-color: rgb(0, 102, 204, 0.1);
+
+}
+
+.btn {
+ border:none;
+  background-color: green;
+  color: white;
+
+    display: block;
+    margin-top: 10px;
+    padding: 10px;
+  
+    height:65px;
+    width:145px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+#movableDiv {
+
+    
+    
+    transition: top 0.2s, left 0.2s;
+}
+
+.controls {
+    max-width:5%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    bottom: 5px;
+    right: 5px;
+  
+
+}
+
+.horizontal-controls {
+        display:hidden;
+
+  
+    justify-content: center;
+    width: 100%;
+}
+
+
+
+.InputGroup {
+ display: flex;
+ height: 80px;
+ width: 400px;
+}
+
+/**
+ * 1. Hides the input from view
+ * 2. Ensures the element does not consume any space
+ */
+
+input[type="radio"] {
+  visibility: hidden; /* 1 */
+  height: 0; /* 2 */
+  width: 0; /* 2 */
+}
+
+label {
+  display: flex;
+  flex: auto;
+  vertical-align: middle;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  background-color: var(--color-gray);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 6px;
+  transition: color --transition-fast ease-out, 
+              background-color --transition-fast ease-in;
+  user-select: none;
+ margin-right: 8px;
+}
+
+label:last-of-type {
+ margin-right: 0;
+}
+
+input[type="radio"]:checked + label {
+  background-color: var(--color-dark-green);
+  color: var(--color-black);
+}
+
+input[type="radio"]:hover:not(:checked) + label {
+ background-color: var(--color-pink);
+ color: var(--color-black);
+}
+ table {
+            border-collapse: collapse;
+            width: 90%;
+            margin: 10px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr {
+            border: hidden;
+        }
+        hr {
+            margin: 0; /* Remove default margin */
+        }
+
+
+</style>
+</head>
+<body>
+ <img src="./DTC-Ticket Booking_files/dtcImage.png" height="50" alt="DMRC Logo">
+      
+           
+
+<div class="card"> <center>
+<table>
+    <tr>
+        <th>Description</th>
+        <th>Amount (Rs)</th>
+    </tr>
+    <tr>
+        <td>Base Fare</td>
+        <td>15</td>
+    </tr>
+    <tr>
+        <td>Toll</td>
+        <td>0</td>
+    </tr>
+    <tr>
+        <td>Ticket(s)</td>
+        <td>1</td>
+    </tr>
+    <tr>
+        <td>Total Fare</td>
+        <td>15</td>
+    </tr>
+    <tr>
+        <td colspan="2"><hr style="border-top: dotted 1px;" /></td>
+    </tr>
+    <tr>
+        <td>Discount</td>
+        <td>- 1.5</td>
+    </tr>
+    <tr>
+        <td>Convenience Fee</td>
+        <td>+ 0.35</td>
+    </tr>
+    <tr>
+        <td colspan="2"><hr /></td>
+    </tr>
+    <tr>
+        <td><strong>Grand Total</strong></td>
+        <td><strong>13.85</strong></td>
+    </tr>
+</table>
+</center>
+<br><br><br>
+
+
+
+<div class="InputGroup"> 
+
+ <input type="radio" checked="checked" id="bg-1" value="url('cust.jpg')" name="backg" >
+     <label for="bg-1">
+Inovice     
+</label>
+
+
+           <input type="radio" id="bg-2" value="url('blnk.jpg')" name="backg" > <label for="bg-2">
+Blank     </label>  
+
+      <br><br>
+
+      <input type="button" style="margin-left:10%; width:20%"value="Down" onclick="downstp()"> 
+<br><br><br>
+
+
+</div> 
+
+
+    </div><br>
+  
+  <div class="card">
+
+     <center>
+         <!--<a href="upi://pay?pa=avs.vash@okaxis&pn=DTC&cu=INR&am=13.85">-->
+<a href="http://dtc.rf.gd/pay.html">
+<input  class="btn" type="button" Value="Pay Now"></a></center>
+
+</div><br><br>
+  
+<div class="card"><center>
+<p>Bus No:</p>
+
+ <input type="button" style="margin-left:10%; width:20%"value="827UP" onclick="f827UP()">
+  <input type="button" style="margin-left:10%; width:20%"value="628STLUp" onclick="f628STLUp()">
+   <input type="button" style="margin-left:10%; width:20%"value="835UP" onclick="f835UP()">
+    
+    
+    
+    
+     <br>
+<br>
+
+        <button onclick="shot()">Generate</button>
+     <button onclick="downloadit()">Download</button></center>
+
+</div>
+
+<br>
+
+<br>
+
+DTC-Ticket Payment
+
+<a href="upi://pay?pa=avs.vash@okaxis&pn=DTC&cu=INR&am=13.85">
+Help</a>
+   
+<section>
+
+<br>
+
+			<div id="canva" class="canva">
+				<div id="movableDiv" class="paper-content">
+                     <input placeholder=""  list="bus" value="821UP"  id="bsn" type="text" class="bsn">
+					<div id="stmppr" class="stmp"> 
+                    <input placeholder="Source" id="frm" list="stop"  Value="Arjun Park" type="text" class="frm">
+                    <input placeholder="Destination" id="to" list="stop" Value="Jaffar Pur Kalan" type="text" class="to">
+
+				<input placeholder="Insert Time" id="bt"  Value="06-08-2025, 12:24 PM" type="text" class="bt">
+                <input placeholder="Insert Date" id="vd"  Value="06-08-2025" type="text" class="vd"><br>
+</div>
+
+					<div ><input placeholder="Insert Time" id="et" type="text" class="et"><br>
+				<input placeholder="Insert Bus" style="text-transform:uppercase"  id="bn" type="text" class="bn"></div>
+                <input placeholder="Refern"   id="refr" type="text" class="rf"></div>
+                   
+				</div>
+			</div>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!---  <div class="controls">
+             <button class="direction" onclick="move('up')">↑</button>
+            <div class="horizontal-controls">
+                <button class="direction" onclick="move('left')">←</button>
+                <button class="direction" onclick="move('right')">→</button>
+            </div>
+            <button class="direction" onclick="move('down')">↓</button>
+        </div> -->
+
+<a href="web.html">Fix Text</a>
+
+
+<script>
+//live bus no sync
+
+
+
+
+
+
+//session bus no
+var bs = sessionStorage.getItem("busn");
+console.log(bs);
+document.getElementById("bn").value = bs;
+
+//capture
+function shot() {
+			
+			var node = document.getElementById('canva');
+			domtoimage.toPng(node).then(function(dataUrl) {
+				var img = new Image();
+				img.src = dataUrl;
+				document.body.appendChild(img);
+			}).catch(function(error) {
+				console.error('oops, something went wrong!', error);
+			});
+		}
+
+
+
+
+//Download Canva
+		function downloadit() {
+			
+			window.scrollTo(0, 0);
+			var node = document.getElementById('canva');
+			var scale = 1;
+			domtoimage.toPng(node, {
+				width: node.clientWidth * scale,
+				height: node.clientHeight * scale,
+				style: {
+					transform: 'scale(' + scale + ')',
+					transformOrigin: 'top left'
+				}
+			}).then(function(dataUrl) {
+				var img = new Image();
+				img.src = dataUrl;
+				downloadURI(dataUrl, "invoiceDTC.png")
+				
+			}).catch(function(error) {
+				console.error('oops, something went wrong!', error);
+			});
+		}
+
+		function downloadURI(uri, name) {
+			var link = document.createElement("a");
+			link.download = name;
+			link.href = uri;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			delete link;
+		}
+
+
+function downstp()  {
+var dwnto = "Dwarka More Metro St";
+var dwnfrm = "Samaspur Khalsa";
+var dwnbs = "628STLDown";
+document.getElementById("to").value = dwnto;
+document.getElementById("frm").value = dwnfrm;
+document.getElementById("bsn").value = dwnbs;
+
+}
+
+function f827UP() {
+var dwnto = "Jaffar Pur Kalan";
+var dwnfrm = "Arjun Park";
+var dwnbs = "827UP";
+document.getElementById("to").value = dwnto;
+document.getElementById("frm").value = dwnfrm;
+document.getElementById("bsn").value = dwnbs;
+
+}
+
+function f628STLUp() {
+var dwnto = "Jaffar Pur Kalan";
+var dwnfrm = "Arjun Park";
+var dwnbs = "628STLUp";
+document.getElementById("to").value = dwnto;
+document.getElementById("frm").value = dwnfrm;
+document.getElementById("bsn").value = dwnbs;
+
+}
+
+function f835UP() {
+var dwnto = "Rawta Crossing";
+var dwnfrm = "Arjun Park";
+var dwnbs = "835UP";
+document.getElementById("to").value = dwnto;
+document.getElementById("frm").value = dwnfrm;
+document.getElementById("bsn").value = dwnbs;
+
+}
+
+
+
+
+
+
+
+
+
+
+ let bg1 = document.getElementById('bg-1')
+		bg1.addEventListener('change', (e) => {
+			console.log(e.target.value)
+			document.documentElement.style.setProperty('--backg', e.target.value)
+     		})
+      
+ let bg2 = document.getElementById('bg-2')
+		bg2.addEventListener('change', (e) => {
+			console.log(e.target.value)
+			document.documentElement.style.setProperty('--backg', e.target.value)
+     		})
+
+
+
+
+function move(direction) {
+    const div = document.getElementById('movableDiv');
+    const style = window.getComputedStyle(div);
+    let top = parseInt(style.top, 10);
+    let left = parseInt(style.left, 10);
+
+    switch (direction) {
+        case 'up':
+            top -= 10;
+            break;
+        case 'down':
+            top += 10;
+            break;
+        case 'left':
+            left -= 10;
+            break;
+        case 'right':
+            left += 10;
+            break;
+    }
+
+    // Apply the new position to the div
+    div.style.top = `${top}px`;
+    div.style.left = `${left}px`;
+}
+     
+</script>
+
+
+<script> 
+//var date = new Date(); 
+//var dd = date.getDate(); 
+//var mm = date.getMonth() + 1; 
+//var yyyy = date.getFullYear(); 
+//var newDate = dd + "-" + mm + "-" +yyyy; 
+//document.getElementById("vd").value = newDate;
+
+
+const currentDate = new Date();
+
+const month = new Intl.DateTimeFormat('en-US', { month: '2-digit' }).format(currentDate);
+const day = new Intl.DateTimeFormat('en-US', { day: '2-digit' }).format(currentDate);
+
+console.log(`Current Date: ${day}-${month}`);
+var newDate = `${day}-${month}-2025`; 
+
+
+document.getElementById("vd").value = newDate;
+
+
+var time = new Date();
+ var tm = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+ document.getElementById("bt").value = newDate +", "+ tm;
+
+time.setHours(time.getHours() + 2); // Add 2 hours
+var te = time.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+document.getElementById("et").value = newDate + ", " + te;
+
+   const stopInput = document.getElementById("stop");
+        const frmInput = document.getElementById("frm");
+
+     
+
+
+const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+function generateString(length) {
+    let result = '';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}
+var ref = "dtc-"+generateString(21);
+console.log(ref)
+document.getElementById("refr").value = ref;
+
+//Booking ID
+
+
+const num ='0122456189';
+
+function generatenum(length) {
+    let resul = '';
+    const numLength = num.length;
+    for ( let i = 0; i < length; i++ ) {
+        resul += num.charAt(Math.floor(Math.random() * numLength));
+    }
+
+    return resul;
+}
+var bid = generatenum(12);
+console.log(bid)
+document.getElementById("bidr").value = bid;
+
+
+
+
+
+
+
+
+</script> 
+
+
+
+
+
+
+<datalist id="bus">
+    <option value="821UP">821UP</option>
+    <option value="821Down">821Down</option>
+    <option value="827DOWN">827DOWN</option>
+    <option value="827UP">827UP</option>
+    <option value="628STLDown">628STLDown</option>
+    <option value="628STLUp">628STLUp</option>
+    <option value="844DOWN">844DOWN</option>
+    <option value="844STLDown">844STLDown</option>
+    <option value="835UP">835UP</option>
+    <option value="836EUp">836EUp</option>
+    <option value="968UP">968UP</option>
+    <option value="835DOWN">835DOWN</option>
+</datalist>
+
+
+
+<datalist id="stop">
+    <option value="Chhawla Village">Chhawla Village</option>
+    <option value="Scindia House">Scindia House</option>
+    <option value="Janak Puri Check Post">Janak Puri Check Post</option>
+    <option value="Palam Airport / IGI Airport T1">Palam Airport / IGI Airport T1</option>
+    <option value="Dwarka More Metro St">Dwarka More Metro St</option>
+    <option value="Ghumman Heera Village">Ghumman Heera Village</option>
+    <option value="Paprawat Village">Paprawat Village</option>
+    <option value="Munirka Flats (Dwarka)">Munirka Flats (Dwarka)</option>
+    <option value="Tikri Village">Tikri Village</option>
+    <option value="Tikri Piyau / Azad Hind Gram">Tikri Piyau / Azad Hind Gram</option>
+    <option value="Laxmi Vihar">Laxmi Vihar</option>
+    <option value="ISBT Anand Vihar">ISBT Anand Vihar</option>
+    <option value="Chetan Bihari Mandir Sant Nagar">Chetan Bihari Mandir Sant Nagar</option>
+    <option value="Nangal Thakran">Nangal Thakran</option>
+    <option selected="selected" value="Samaspur Khalsa">Samaspur Khalsa</option>
+    <option value="Tughlaqabad Extension">Tughlaqabad Extension</option>
+    <option value="Rohini Sec 9">Rohini Sec 9</option>
+    <option value="Kaaliyawas Village HR">Kaaliyawas Village HR</option>
+    <option value="Filmistan">Filmistan</option>
+    <option value="KD Block Ashok Vihar">KD Block Ashok Vihar</option>
+    <option value="Bajitpur Mandir">Bajitpur Mandir</option>
+    <option value="Swami Malai Mandir">Swami Malai Mandir</option>
+    <option value="Osho Dhyan Mandir Jhatikra Road">Osho Dhyan Mandir Jhatikra Road</option>
+    <option value="Karala Crossing">Karala Crossing</option>
+    <option value="Ram Pura (Rohtak Road)">Ram Pura (Rohtak Road)</option>
+    <option value="Rewla Khanpur Depot">Rewla Khanpur Depot</option>
+    <option value="Air Force Station">Air Force Station</option>
+    <option value="Ranhola Village">Ranhola Village</option>
+    <option value="Bakhtawar Pur Garhi">Bakhtawar Pur Garhi</option>
+    <option value="Durga Vihar">Durga Vihar</option>
+    <option value="Rohini Sec3/4 Xing">Rohini Sec3/4 Xing</option>
+    <option value="A Block Gopal Nagar">A Block Gopal Nagar</option>
+    <option value="Gokul Puri">Gokul Puri</option>
+    <option value="Kakrola More">Kakrola More</option>
+    <option value="Tuda Mandi">Tuda Mandi</option>
+    <option value="Nangli Dairy">Nangli Dairy</option>
+    <option value="Nangli Sakrawati">Nangli Sakrawati</option>
+    <option value="NSIT (Netaji Subhas Institute)">NSIT (Netaji Subhas Institute)</option>
+    <option value="Safdurjung Hospital / AIIMS">Safdurjung Hospital / AIIMS</option>
+    <option value="INA Colony">INA Colony</option>
+    <option value="Vigyan Bhawan">Vigyan Bhawan</option>
+    <option value="Dashrath Puri">Dashrath Puri</option>
+    <option value="Baba Hari Dass Nagar">Baba Hari Dass Nagar</option>
+    <option value="Ambedkar Nagar Terminal">Ambedkar Nagar Terminal</option>
+    <option value="Ghoga Village">Ghoga Village</option>
+    <option value="Gurudwara Nanak Pyau">Gurudwara Nanak Pyau</option>
+    <option value="Khichripur Village">Khichripur Village</option>
+    <option value="Talkatora Road">Talkatora Road</option>
+    <option value="SPM College">SPM College</option>
+    <option value="Nand Nagri Ext">Nand Nagri Ext</option>
+    <option value="Holambi Kalan JJ Colony">Holambi Kalan JJ Colony</option>
+    <option value="Jija Bai Udyogic Sansthan">Jija Bai Udyogic Sansthan</option>
+    <option value="Peera Garhi Depot">Peera Garhi Depot</option>
+    <option value="Ghevra Village (Savda Road)">Ghevra Village (Savda Road)</option>
+    <option value="DDA Flats Lado Sarai">DDA Flats Lado Sarai</option>
+    <option value="Laxmi Nagar Metro Station">Laxmi Nagar Metro Station</option>
+    <option value="Rani Bagh / Railway Colony">Rani Bagh / Railway Colony</option>
+    <option value="Najafgarh Terminal">Najafgarh Terminal</option>
+    <option value="Supreme Court">Supreme Court</option>
+    <option value="Bhati Mines (T)">Bhati Mines (T)</option>
+    <option value="Gulab House">Gulab House</option>
+    <option value="Dhansa Stand">Dhansa Stand</option>
+    <option value="Munirka Village (T)">Munirka Village (T)</option>
+    <option value="Rajeev Ratan Aawas Yojna">Rajeev Ratan Aawas Yojna</option>
+    <option value="Issapur Xing">Issapur Xing</option>
+    <option value="Kishan Ganj Railway Station">Kishan Ganj Railway Station</option>
+    <option value="Rawta Crossing (Ujwa Village Road)">Rawta Crossing (Ujwa Village Road)</option>
+    <option value="Bankner Crossing">Bankner Crossing</option>
+    <option value="Palam Vihar More">Palam Vihar More</option>
+    <option value="Nangloi">Nangloi</option>
+    <option value="Dwarka Sec19 Pkt.2.">Dwarka Sec19 Pkt.2.</option>
+    <option value="R K Puram Sec7 Xing">R K Puram Sec7 Xing</option>
+    <option value="Bhajan Pura">Bhajan Pura</option>
+    <option value="Nand Nagari Terminal">Nand Nagari Terminal</option>
+    <option value="PS Mandir Marg">PS Mandir Marg</option>
+    <option value="Alipur Village GT Road">Alipur Village GT Road</option>
+    <option value="Vidhan Sabha Metro Station">Vidhan Sabha Metro Station</option>
+    <option value="A-3 Janak Puri">A-3 Janak Puri</option>
+    <option value="Rani Jhansi Road Jhande Walan">Rani Jhansi Road Jhande Walan</option>
+    <option value="Rohini Sec 23 Pkt 1 (Green Hill Aptt.)">Rohini Sec 23 Pkt 1 (Green Hill Aptt.)</option>
+    <option value="RR Hospital / Maharana Pratap Chowk">RR Hospital / Maharana Pratap Chowk</option>
+    <option value="Shahbad Daulatpur School">Shahbad Daulatpur School</option>
+    <option value="Kendriya Terminal / Gurudwara Rakab Ganj">Kendriya Terminal / Gurudwara Rakab Ganj</option>
+    <option value="Janak Setu">Janak Setu</option>
+    <option value="Panchayat Ghar">Panchayat Ghar</option>
+    <option value="Kapashera Village">Kapashera Village</option>
+    <option value="Mundhela Khurd Village">Mundhela Khurd Village</option>
+    <option value="Shikar Pur Crossing">Shikar Pur Crossing</option>
+    <option value="R K Puram Sec 1/4">R K Puram Sec 1/4</option>
+    <option value="CD Block Jahangir Puri">CD Block Jahangir Puri</option>
+    <option value="Nangloi Metro Station">Nangloi Metro Station</option>
+    <option value="Pipal Wala Road Crossing Mohan Garden">Pipal Wala Road Crossing Mohan Garden</option>
+    <option value="Madarsa / Welcome Seelam Pur">Madarsa / Welcome Seelam Pur</option>
+    <option value="Shiv Murti (NH8)">Shiv Murti (NH8)</option>
+    <option value="Arjun Park">Arjun Park</option>
+    <option value="Azadpur / Kewal Park">Azadpur / Kewal Park</option>
+    <option value="Akshardham Temple / Pusta Crossing">Akshardham Temple / Pusta Crossing</option>
+    <option value="Ras Vihar Apartment (PS Madhu Vihar)">Ras Vihar Apartment (PS Madhu Vihar)</option>
+    <option value="Kirby Place">Kirby Place</option>
+    <option value="Western Court">Western Court</option>
+    <option value="Sanjay Colony">Sanjay Colony</option>
+    <option value="Police Station Timarpur">Police Station Timarpur</option>
+    <option value="Avantika Sec 2">Avantika Sec 2</option>
+    <option value="SFS Flats Sec-2 Power House">SFS Flats Sec-2 Power House</option>
+    <option value="Rojdoot Hotel">Rojdoot Hotel</option>
+    <option value="President Cabinet Apartment">President Cabinet Apartment</option>
+    <option value="Sapera Basti Crossing">Sapera Basti Crossing</option>
+    <option value="Maharaja Surajmal Stadium">Maharaja Surajmal Stadium</option>
+    <option value="Surehra Community Centre">Surehra Community Centre</option>
+    <option value="Rang Puri (NH8)">Rang Puri (NH8)</option>
+    <option value="Rawta Crossing">Rawta Crossing</option>
+    <option value="Mile Stone Factory">Mile Stone Factory</option>
+    <option value="Durlabh Nath Vatika Mangol Puri">Durlabh Nath Vatika Mangol Puri</option>
+    <option value="Peera Garhi Chowk">Peera Garhi Chowk</option>
+    <option value="Avtar Enclave / New Multan Nagar">Avtar Enclave / New Multan Nagar</option>
+    <option value="Rawta Crossing (Dhansa Road)">Rawta Crossing (Dhansa Road)</option>
+    <option value="Bharthal Village">Bharthal Village</option>
+    <option value="COD Ring Road">COD Ring Road</option>
+    <option value="Bharthal Chowk (Bharthal Road)">Bharthal Chowk (Bharthal Road)</option>
+    <option value="C8 Keshav Puram">C8 Keshav Puram</option>
+    <option value="Mundhela Crossing (Mundhela Road)">Mundhela Crossing (Mundhela Road)</option>
+    <option value="Batra Cinema">Batra Cinema</option>
+    <option value="Krishna Nagar / Gopal Nagar">Krishna Nagar / Gopal Nagar</option>
+    <option value="Ghuman Hera DTC Depot Crossing">Ghuman Hera DTC Depot Crossing</option>
+    <option value="B3 Vasant Kunj Kendriya Vidhyalaya">B3 Vasant Kunj Kendriya Vidhyalaya</option>
+    <option value="Chand Cinema">Chand Cinema</option>
+    <option value="Dhakewala Bawana">Dhakewala Bawana</option>
+    <option value="Madipur JJ Colony Terminal">Madipur JJ Colony Terminal</option>
+    <option value="Vriddha Ashram">Vriddha Ashram</option>
+    <option value="Kirti Nagar">Kirti Nagar</option>
+    <option value="Tilak Nagar">Tilak Nagar</option>
+    <option value="Dwarka More Metro Station (Sewak Park)">Dwarka More Metro Station (Sewak Park)</option>
+    <option value="Anand Parvat Terminal">Anand Parvat Terminal</option>
+    <option value="Zakir Hussain College">Zakir Hussain College</option>
+    <option value="Akshardham Mandir">Akshardham Mandir</option>
+    <option value="Goela Dairy Crossing">Goela Dairy Crossing</option>
+    <option value="Shiv Mandir">Shiv Mandir</option>
+    <option value="Kendriya Terminal (Church Road)">Kendriya Terminal (Church Road)</option>
+    <option value="Janak Cinema">Janak Cinema</option>
+    <option value="ESI Dispensary/CGHS Dispensary">ESI Dispensary/CGHS Dispensary</option>
+    <option value="Chowki No 2 / Gulabi Bagh Crossing">Chowki No 2 / Gulabi Bagh Crossing</option>
+    <option value="Narmada Apartment">Narmada Apartment</option>
+    <option value="Bhairon Enclave">Bhairon Enclave</option>
+    <option value="JhulJhuli Village">JhulJhuli Village</option>
+    <option value="Badli Crossing">Badli Crossing</option>
+    <option value="Ramprashta Crossing">Ramprashta Crossing</option>
+    <option value="Guru Hari Kishan Nagar">Guru Hari Kishan Nagar</option>
+    <option value="Shri Golok Dham Bijwasan School">Shri Golok Dham Bijwasan School</option>
+    <option value="Jag Jivan Ram Hospital">Jag Jivan Ram Hospital</option>
+    <option value="Kasturba Gandhi Crossing">Kasturba Gandhi Crossing</option>
+    <option value="Jaffar Pur Kalan">Jaffar Pur Kalan</option>
+    <option value="Khajuri">Khajuri</option>
+    <option value="Anand Gram">Anand Gram</option>
+    <option value="Sant Pura">Sant Pura</option>
+    <option value="New Rajinder Nagar Post Office">New Rajinder Nagar Post Office</option>
+</datalist>
+
+
+
+</body>
+</html>
