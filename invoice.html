@@ -323,7 +323,7 @@
         /* From Location */
         .from-location {
             top: 164px;
-            left: 11px;
+            left: 10px;
             width: 120px;
             font-size: 15px;
         }
@@ -755,9 +755,6 @@
                 
                 <!-- Transaction ID -->
                 <input type="text" class="ticket-field transaction-id" id="ticketTransactionId">
-                
-                <!-- Bus Type -->
-                <input type="text" id="ticketBusType">
             </div>
         </div>
     </div>
@@ -1051,10 +1048,6 @@
             document.getElementById('ticketFare').value = document.getElementById('fare').value;
             document.getElementById('ticketBusNumber').value = document.getElementById('busNumber').value;
             document.getElementById('ticketValidDate').value = document.getElementById('validDate').value;
-            
-            // Update bus type field
-            const isAC = document.getElementById('ac').checked;
-            document.getElementById('ticketBusType').value = isAC ? 'AC' : 'Non-AC';
         }
 
         // Update form inputs from ticket fields (reverse sync)
@@ -1202,7 +1195,7 @@
             });
 
             // Add event listeners to ticket fields (ticket to control panel)
-            const ticketFields = ['ticketRouteNumber', 'ticketFromLocation', 'ticketToLocation', 'ticketPassengers', 'ticketFare', 'ticketBusNumber', 'ticketValidDate', 'ticketBusType'];
+            const ticketFields = ['ticketRouteNumber', 'ticketFromLocation', 'ticketToLocation', 'ticketPassengers', 'ticketFare', 'ticketBusNumber', 'ticketValidDate'];
             ticketFields.forEach(fieldId => {
                 document.getElementById(fieldId).addEventListener('input', updateFormFields);
             });
