@@ -62,6 +62,32 @@
             width: 600px; /* Width of the invoice area */
         }
 
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                height: auto;
+                padding: 10px;
+            }
+            
+            .controls {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            
+            .canva {
+                width: 100%;
+                max-width: 400px;
+                height: auto;
+                aspect-ratio: 600/560;
+                margin: 0 auto;
+            }
+            
+            .background-options {
+                width: 100%;
+                margin-top: 20px;
+            }
+        }
+
         #movableDiv {
             position: absolute;
             transition: top 0.2s, left 0.2s;
@@ -133,9 +159,24 @@
     <script>
         function shot() {
             var node = document.getElementById('canva');
-            domtoimage.toPng(node).then(function(dataUrl) {
+            
+            // Get the actual rendered dimensions
+            const rect = node.getBoundingClientRect();
+            
+            var options = {
+                width: rect.width,
+                height: rect.height,
+                style: {
+                    margin: '0',
+                    padding: '0'
+                }
+            };
+            
+            domtoimage.toPng(node, options).then(function(dataUrl) {
                 var img = new Image();
                 img.src = dataUrl;
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
                 document.body.appendChild(img);
             }).catch(function(error) {
                 console.error('Oops, something went wrong!', error);
