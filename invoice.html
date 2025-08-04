@@ -567,8 +567,8 @@
             }
             
             th, td {
-                padding: 8px 6px;
-                font-size: 13px;
+                padding: 4px 6px;
+                font-size: 11px;
             }
         }
 
@@ -690,7 +690,7 @@
         
         <!-- Bus No Section -->
         <div style="text-align: center; margin-bottom: 20px;">
-            <div style="font-weight: 600; color: var(--color-black); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Select Route</div>
+            <div style="font-weight: 600; color: var(--color-black); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Past Route</div>
             
             <div class="route-grid">
                 <button class="btn btn-outline route-btn" onclick="f827UP()">827UP</button>
@@ -1086,9 +1086,12 @@
                 // Remove focus from any active input field
                 document.activeElement.blur();
                 
+                // Get the actual rendered dimensions
+                const rect = node.getBoundingClientRect();
+                
                 var options = {
-                    width: 398,
-                    height: 553,
+                    width: rect.width,
+                    height: rect.height,
                     style: {
                         margin: '0',
                         padding: '0',
@@ -1108,6 +1111,8 @@
                     img.src = dataUrl;
                     img.className = 'preview-image';
                     img.alt = 'Ticket Preview';
+                    img.style.maxWidth = '100%';
+                    img.style.height = 'auto';
                     
                     // Add to preview container
                     previewContainer.appendChild(img);
@@ -1133,9 +1138,12 @@
                 // Remove focus from any active input field
                 document.activeElement.blur();
                 
+                // Get the actual rendered dimensions
+                const rect = node.getBoundingClientRect();
+                
                 var options = {
-                    width: 398,
-                    height: 553,
+                    width: rect.width,
+                    height: rect.height,
                     style: {
                         margin: '0',
                         padding: '0',
@@ -1232,17 +1240,15 @@
             const baseFarePerTicket = isAC ? 25 : 15;
             
             const discount = isAC ? 2.15 : 1.15;
-            const convenienceFee = isAC ? 0.35 : 0;
             
             const totalFare = baseFarePerTicket * passengers;
-            const grandTotal = totalFare - discount + convenienceFee;
+            const grandTotal = totalFare - discount;
             
             // Update table values
             document.getElementById('baseFare').textContent = baseFarePerTicket.toFixed(2);
             document.getElementById('ticketCount').textContent = passengers;
             document.getElementById('totalFare').textContent = totalFare.toFixed(2);
             document.getElementById('discount').textContent = `- ${discount}`;
-            document.getElementById('convenienceFee').textContent = `+ ${convenienceFee.toFixed(2)}`;
             document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
             
             // Update fare input field
