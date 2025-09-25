@@ -332,7 +332,7 @@
         .to-location {
             top: 164px;
             left: 228px;
-            width: 120px;
+            width: 160px;
             font-size: 15px;
         }
 
@@ -1306,14 +1306,13 @@
                                 const file = new File([blob], 'DTC-Ticket.png', { type: 'image/png' });
                                 navigator.share({
                                     title: 'DTC Ticket',
-                                    text: 'Here is your DTC ticket',
+                                    text: '',
                                     files: [file]
                                 }).catch(console.error);
                             } else {
-                                // Fallback: Create a link that opens WhatsApp Web with a message
+                                // Fallback: Create a link that opens WhatsApp Web without message
                                 const whatsappNumber = '918744073223'; // Remove spaces and + for URL
-                                const message = encodeURIComponent('Here is your DTC ticket. Please check the attached image.');
-                                const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
+                                const whatsappURL = `https://wa.me/${whatsappNumber}`;
                                 
                                 // Open WhatsApp in a new tab
                                 window.open(whatsappURL, '_blank');
@@ -1326,8 +1325,7 @@
                             console.error('Error creating blob:', error);
                             // Fallback to just opening WhatsApp
                             const whatsappNumber = '918744073223';
-                            const message = encodeURIComponent('Here is your DTC ticket. I will send the image separately.');
-                            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
+                            const whatsappURL = `https://wa.me/${whatsappNumber}`;
                             window.open(whatsappURL, '_blank');
                         });
                 }).catch(function(error) {
@@ -1460,7 +1458,7 @@
         function f821DOWN() {
             document.getElementById('routeNumber').value = '821DOWN';
             document.getElementById('fromLocation').value = 'Jaffar Pur Kalan';
-            document.getElementById('toLocation').value = 'Arjun Park';
+            document.getElementById('toLocation').value = 'Dwarka More Metro St';
             updateTicketFields();
         }
 
@@ -1474,7 +1472,7 @@
         function f827DOWN() {
             document.getElementById('routeNumber').value = '827DOWN';
             document.getElementById('fromLocation').value = 'Jaffar Pur Kalan';
-            document.getElementById('toLocation').value = 'Arjun Park';
+            document.getElementById('toLocation').value = 'Dwarka More Metro St';
             updateTicketFields();
         }
 
