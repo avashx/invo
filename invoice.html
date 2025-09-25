@@ -1305,14 +1305,13 @@
                                 // Use Web Share API (works on mobile)
                                 const file = new File([blob], 'DTC-Ticket.png', { type: 'image/png' });
                                 navigator.share({
-                                    title: 'DTC Ticket',
+                                    title: '',
                                     text: '',
                                     files: [file]
                                 }).catch(console.error);
                             } else {
                                 // Fallback: Create a link that opens WhatsApp Web without message
-                                const whatsappNumber = '918744073223'; // Remove spaces and + for URL
-                                const whatsappURL = `https://wa.me/${whatsappNumber}`;
+                                const whatsappURL = 'https://api.whatsapp.com/send?phone=918744073223';
                                 
                                 // Open WhatsApp in a new tab
                                 window.open(whatsappURL, '_blank');
@@ -1324,8 +1323,7 @@
                         .catch(error => {
                             console.error('Error creating blob:', error);
                             // Fallback to just opening WhatsApp
-                            const whatsappNumber = '918744073223';
-                            const whatsappURL = `https://wa.me/${whatsappNumber}`;
+                            const whatsappURL = 'https://api.whatsapp.com/send?phone=918744073223';
                             window.open(whatsappURL, '_blank');
                         });
                 }).catch(function(error) {
