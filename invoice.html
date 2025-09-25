@@ -1309,9 +1309,10 @@
                                     files: [file]
                                 }).catch(console.error);
                             } else {
-                                // Fallback: Create a link that opens WhatsApp Web
-                                const whatsappNumber = '8744073223'; // Without country code
-                                const whatsappURL = `https://wa.me/${whatsappNumber}`;
+                                // Fallback: Create a link that opens WhatsApp Web with a message
+                                const whatsappNumber = '918744073223'; // Remove spaces and + for URL
+                                const message = encodeURIComponent('Here is your DTC ticket. Please check the attached image.');
+                                const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
                                 
                                 // Open WhatsApp in a new tab
                                 window.open(whatsappURL, '_blank');
@@ -1323,8 +1324,9 @@
                         .catch(error => {
                             console.error('Error creating blob:', error);
                             // Fallback to just opening WhatsApp
-                            const whatsappNumber = '8744073223';
-                            const whatsappURL = `https://wa.me/${whatsappNumber}`;
+                            const whatsappNumber = '918744073223';
+                            const message = encodeURIComponent('Here is your DTC ticket. I will send the image separately.');
+                            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
                             window.open(whatsappURL, '_blank');
                         });
                 }).catch(function(error) {
@@ -1349,14 +1351,6 @@
 
             initializeDate();
             generateTicket();
-            
-            // Auto-generate ticket preview on page load
-            setTimeout(function() {
-                shot(); // First shot after 1 second
-                setTimeout(function() {
-                    shot(); // Second shot after another 1 second (2 seconds total)
-                }, 1000);
-            }, 1000);
             
             // Add event listeners to form inputs (control panel to ticket)
             const inputs = ['routeNumber', 'fromLocation', 'toLocation', 'passengers', 'fare', 'busNumber', 'validDate'];
@@ -1393,6 +1387,16 @@
             
             // Initial fare table update
             updateFareTable();
+            
+            // Auto-generate ticket preview on page load
+            setTimeout(function() {
+                shot(); // First shot() call immediately after page load
+                
+                // Second shot() call after 1 second
+                setTimeout(function() {
+                    shot();
+                }, 1000);
+            }, 100); // Small delay to ensure DOM is fully ready
         });
 
         // Function to change ticket background
