@@ -880,7 +880,7 @@
             <option value="A Block Gopal Nagar">A Block Gopal Nagar</option>
             <option value="Gokul Puri">Gokul Puri</option>
             <option value="Kakrola More">Kakrola More</option>
-            <option value="Tuqa Mandi">Tuda Mandi</option>
+            <option value="Tuda Mandi">Tuda Mandi</option>
             <option value="Nangli Dairy">Nangli Dairy</option>
             <option value="Nangli Sakrawati">Nangli Sakrawati</option>
             <option value="NSIT (Netaji Subhas Institute)">NSIT (Netaji Subhas Institute)</option>
@@ -1128,6 +1128,7 @@
 
         // Update all ticket fields from form inputs
         function updateTicketFields() {
+            console.log('updateTicketFields called');
             document.getElementById('ticketRouteNumber').value = document.getElementById('routeNumber').value;
             document.getElementById('ticketFromLocation').value = document.getElementById('fromLocation').value;
             document.getElementById('ticketToLocation').value = document.getElementById('toLocation').value;
@@ -1305,7 +1306,7 @@
                                 const file = new File([blob], 'DTC-Ticket.png', { type: 'image/png' });
                                 navigator.share({
                                     title: 'DTC Ticket',
-                                    text: ,
+                                    text: 'Here is your DTC ticket',
                                     files: [file]
                                 }).catch(console.error);
                             } else {
@@ -1337,6 +1338,8 @@
 
         // Event listeners for real-time updates
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded - Starting initialization');
+            
             // Check for bus number parameter in URL
             const urlParams = new URLSearchParams(window.location.search);
             const busNumber = urlParams.get('busNumber');
@@ -1351,6 +1354,9 @@
 
             initializeDate();
             generateTicket();
+            
+            // Initial sync of ticket fields with form values
+            updateTicketFields();
             
             // Add event listeners to form inputs (control panel to ticket)
             const inputs = ['routeNumber', 'fromLocation', 'toLocation', 'passengers', 'fare', 'busNumber', 'validDate'];
@@ -1430,6 +1436,7 @@
 
         // Bus number button functions (matching book.html functionality)
         function f827UP() {
+            console.log('f827UP called');
             document.getElementById('routeNumber').value = '827UP';
             document.getElementById('fromLocation').value = 'Arjun Park';
             document.getElementById('toLocation').value = 'Jaffar Pur Kalan';
