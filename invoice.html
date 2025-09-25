@@ -1389,14 +1389,12 @@
             updateFareTable();
             
             // Auto-generate ticket preview on page load
+            shot(); // First shot() call immediately on page load
+            
+            // Second shot() call after 1 second
             setTimeout(function() {
-                shot(); // First shot() call immediately after page load
-                
-                // Second shot() call after 1 second
-                setTimeout(function() {
-                    shot();
-                }, 1000);
-            }, 100); // Small delay to ensure DOM is fully ready
+                shot();
+            }, 1000);
         });
 
         // Function to change ticket background
