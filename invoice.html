@@ -704,146 +704,7 @@
         <h1 class="app-title">DTC Ticket Generator</h1>
     </div>
     
-    <!-- Fare Breakdown Table -->
-    <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <div class="card-title" style="margin: 0;">Fare Breakdown</div>
-            
-            <!-- AC/Non-AC Toggle -->
-            <div class="InputGroup" style="width: 160px; height: 35px; margin: 0;">
-                <input type="radio" id="non-ac" value="non-ac" name="bus-type">
-                <label for="non-ac" style="font-size: 12px;">Non-AC</label>
-                
-                <input type="radio" checked="checked" id="ac" value="ac" name="bus-type">
-                <label for="ac" style="font-size: 12px;">AC</label>
-            </div>
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Description</th>
-                    <th>Amount (Rs)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Base Fare</td>
-                    <td id="baseFare">15.00</td>
-                </tr>
-                <tr>
-                    <td>Ticket(s)</td>
-                    <td id="ticketCount">1</td>
-                </tr>
-                <tr>
-                    <td>Total Fare</td>
-                    <td id="totalFare">15.00</td>
-                </tr>
-                <tr>
-                    <td colspan="2"><hr /></td>
-                </tr>
-                <tr>
-                    <td>Discount</td>
-                    <td id="discount">- 1.15</td>
-                </tr>
-                <tr>
-                    <td colspan="2"><hr /></td>
-                </tr>
-                <tr style="font-weight: 600;">
-                    <td>Grand Total</td>
-                    <td id="grandTotal">13.85</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <div class="section-divider"></div>
-
-        <div class="InputGroup"> 
-            <input type="radio" checked="checked" id="bg-1" value="url('blank-ticket.JPG')" name="backg" >
-            <label for="bg-1">Ticket</label>
-
-            <input type="radio" id="bg-2" value="url('blnk.jpg')" name="backg" > 
-            <label for="bg-2">Blank</label>  
-        </div>
-        
-        <input type="button" class="btn btn-outline" style="margin: 20px auto; width: 30%; max-width: 150px; display: block;" value="Down" onclick="downstp()"> 
-    </div>
-    
-    <!-- Combined Actions Card -->
-    <div class="card">
-        <div class="card-title">Quick Actions</div>
-        
-        <!-- Pay Now Section -->
-        <a href="/pay.html" style="text-decoration: none;">
-            <button class="btn btn-success">Pay Now</button>
-        </a>
-        
-        <div class="section-divider"></div>
-        
-        <!-- Bus No Section -->
-        <div style="text-align: center; margin-bottom: 20px;">
-            <div style="font-weight: 600; color: var(--color-black); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Past Route</div>
-            
-            <div class="route-grid">
-                <button class="btn btn-outline route-btn" onclick="f827UP()">827UP</button>
-                <button class="btn btn-outline route-btn" onclick="f628STLUp()">628STLUp</button>
-                <button class="btn btn-outline route-btn" onclick="f835UP()">835UP</button>
-                <button class="btn btn-outline route-btn" onclick="f821DOWN()">821DOWN</button>
-            </div>
-        </div>
-        
-        <div class="section-divider"></div>
-        
-        <!-- Action Buttons -->
-        <div class="action-grid">
-            <button class="btn btn-primary" onclick="shot()">Generate</button>
-            <button class="btn btn-primary" onclick="downloadTicket()">Download Ticket</button>
-        </div>
-
-        <div id="previewContainer" class="preview-container" style="display: none;">
-            <h4>Preview</h4>
-            <div id="previewImageContainer"></div>
-        </div>
-    </div>
-    
-    <!-- Ticket Preview at the top -->
-    <div class="ticket-preview">
-        <div id="ticketContainer" class="ticket-container">
-            <!-- All input fields grouped in a single container for easy positioning -->
-            <div id="fieldsContainer" class="fields-container">
-                <!-- Route Number -->
-                <input type="text" class="ticket-field route-number" id="ticketRouteNumber">
-                
-                <!-- From Location -->
-                <input type="text" class="ticket-field from-location" id="ticketFromLocation">
-                
-                <!-- To Location -->
-                <input type="text" class="ticket-field to-location" id="ticketToLocation">
-                
-                <!-- Passengers -->
-                <input type="text" class="ticket-field passengers" id="ticketPassengers">
-                
-                <!-- Fare -->
-                <input type="text" class="ticket-field fare" id="ticketFare">
-                
-                <!-- Ticket Number -->
-                <input type="text" class="ticket-field ticket-number" id="ticketNumber">
-                
-                <!-- Valid Date -->
-                <input type="text" class="ticket-field valid-date" id="ticketValidDate">
-                
-                <!-- Booking ID -->
-                <input type="text" class="ticket-field booking-id" id="ticketBookingId">
-                
-                <!-- Bus Number -->
-                <input type="text" class="ticket-field bus-number" id="ticketBusNumber">
-                
-                <!-- Transaction ID -->
-                <input type="text" class="ticket-field transaction-id" id="ticketTransactionId">
-            </div>
-        </div>
-    </div>
-
-    <!-- Controls Panel at the bottom -->
+    <!-- Controls Panel moved to top -->
     <div class="card config-card">
         <div class="card-title">Configuration</div>
         
@@ -1059,6 +920,147 @@
             <div class="form-group">
                 <label for="validDate">Valid Date</label>
                 <input type="text" id="validDate" readonly placeholder="Date">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Fare Breakdown Table -->
+    <div class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div class="card-title" style="margin: 0;">Fare Breakdown</div>
+            
+            <!-- AC/Non-AC Toggle -->
+            <div class="InputGroup" style="width: 160px; height: 35px; margin: 0;">
+                <input type="radio" id="non-ac" value="non-ac" name="bus-type">
+                <label for="non-ac" style="font-size: 12px;">Non-AC</label>
+                
+                <input type="radio" checked="checked" id="ac" value="ac" name="bus-type">
+                <label for="ac" style="font-size: 12px;">AC</label>
+            </div>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount (Rs)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Base Fare</td>
+                    <td id="baseFare">15.00</td>
+                </tr>
+                <tr>
+                    <td>Ticket(s)</td>
+                    <td id="ticketCount">1</td>
+                </tr>
+                <tr>
+                    <td>Total Fare</td>
+                    <td id="totalFare">15.00</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><hr /></td>
+                </tr>
+                <tr>
+                    <td>Discount</td>
+                    <td id="discount">- 1.15</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><hr /></td>
+                </tr>
+                <tr style="font-weight: 600;">
+                    <td>Grand Total</td>
+                    <td id="grandTotal">13.85</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-divider"></div>
+
+        <div class="InputGroup"> 
+            <input type="radio" checked="checked" id="bg-1" value="url('blank-ticket.JPG')" name="backg" >
+            <label for="bg-1">Ticket</label>
+
+            <input type="radio" id="bg-2" value="url('blnk.jpg')" name="backg" > 
+            <label for="bg-2">Blank</label>  
+        </div>
+        
+        <input type="button" class="btn btn-outline" style="margin: 20px auto; width: 30%; max-width: 150px; display: block;" value="Down" onclick="downstp()"> 
+    </div>
+    
+    <!-- Combined Actions Card -->
+    <div class="card">
+        <div class="card-title">Quick Actions</div>
+        
+        <!-- Pay Now Section -->
+        <a href="/pay.html" style="text-decoration: none;">
+            <button class="btn btn-success">Pay Now</button>
+        </a>
+        
+        <div class="section-divider"></div>
+        
+        <!-- Bus No Section -->
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-weight: 600; color: var(--color-black); margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.5px;">Past Route</div>
+            
+            <div class="route-grid">
+                <button class="btn btn-outline route-btn" onclick="f827UP()">827UP</button>
+                <button class="btn btn-outline route-btn" onclick="f628STLUp()">628STLUp</button>
+                <button class="btn btn-outline route-btn" onclick="f835UP()">835UP</button>
+                <button class="btn btn-outline route-btn" onclick="f821DOWN()">821DOWN</button>
+                <button class="btn btn-outline route-btn" onclick="f844UP()">844UP</button>
+                <button class="btn btn-outline route-btn" onclick="f827DOWN()">827DOWN</button>
+            </div>
+        </div>
+        
+        <div class="section-divider"></div>
+        
+        <!-- Action Buttons -->
+        <div class="action-grid">
+            <button class="btn btn-primary" onclick="shot()">Generate</button>
+            <button class="btn btn-primary" onclick="downloadTicket()">Download Ticket</button>
+        </div>
+
+        <div id="previewContainer" class="preview-container" style="display: none;">
+            <h4>Preview</h4>
+            <div id="previewImageContainer"></div>
+        </div>
+    </div>
+    
+    <!-- Ticket Preview moved to bottom -->
+    <div class="ticket-preview">
+        <div id="ticketContainer" class="ticket-container">
+            <!-- All input fields grouped in a single container for easy positioning -->
+            <div id="fieldsContainer" class="fields-container">
+                <!-- Route Number -->
+                <input type="text" class="ticket-field route-number" id="ticketRouteNumber">
+                
+                <!-- From Location -->
+                <input type="text" class="ticket-field from-location" id="ticketFromLocation">
+                
+                <!-- To Location -->
+                <input type="text" class="ticket-field to-location" id="ticketToLocation">
+                
+                <!-- Passengers -->
+                <input type="text" class="ticket-field passengers" id="ticketPassengers">
+                
+                <!-- Fare -->
+                <input type="text" class="ticket-field fare" id="ticketFare">
+                
+                <!-- Ticket Number -->
+                <input type="text" class="ticket-field ticket-number" id="ticketNumber">
+                
+                <!-- Valid Date -->
+                <input type="text" class="ticket-field valid-date" id="ticketValidDate">
+                
+                <!-- Booking ID -->
+                <input type="text" class="ticket-field booking-id" id="ticketBookingId">
+                
+                <!-- Bus Number -->
+                <input type="text" class="ticket-field bus-number" id="ticketBusNumber">
+                
+                <!-- Transaction ID -->
+                <input type="text" class="ticket-field transaction-id" id="ticketTransactionId">
             </div>
         </div>
     </div>
@@ -1372,6 +1374,20 @@
 
         function f821DOWN() {
             document.getElementById('routeNumber').value = '821DOWN';
+            document.getElementById('fromLocation').value = 'Jaffar Pur Kalan';
+            document.getElementById('toLocation').value = 'Arjun Park';
+            updateTicketFields();
+        }
+
+        function f844UP() {
+            document.getElementById('routeNumber').value = '844UP';
+            document.getElementById('fromLocation').value = 'Arjun Park';
+            document.getElementById('toLocation').value = 'Jaffar Pur Kalan';
+            updateTicketFields();
+        }
+
+        function f827DOWN() {
+            document.getElementById('routeNumber').value = '827DOWN';
             document.getElementById('fromLocation').value = 'Jaffar Pur Kalan';
             document.getElementById('toLocation').value = 'Arjun Park';
             updateTicketFields();
