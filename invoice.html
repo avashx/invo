@@ -711,10 +711,10 @@
             
             <!-- AC/Non-AC Toggle -->
             <div class="InputGroup" style="width: 160px; height: 35px; margin: 0;">
-                <input type="radio" checked="checked" id="non-ac" value="non-ac" name="bus-type">
+                <input type="radio" id="non-ac" value="non-ac" name="bus-type">
                 <label for="non-ac" style="font-size: 12px;">Non-AC</label>
                 
-                <input type="radio" id="ac" value="ac" name="bus-type">
+                <input type="radio" checked="checked" id="ac" value="ac" name="bus-type">
                 <label for="ac" style="font-size: 12px;">AC</label>
             </div>
         </div>
@@ -787,6 +787,7 @@
                 <button class="btn btn-outline route-btn" onclick="f827UP()">827UP</button>
                 <button class="btn btn-outline route-btn" onclick="f628STLUp()">628STLUp</button>
                 <button class="btn btn-outline route-btn" onclick="f835UP()">835UP</button>
+                <button class="btn btn-outline route-btn" onclick="f821DOWN()">821DOWN</button>
             </div>
         </div>
         
@@ -849,17 +850,17 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="routeNumber">Route</label>
-                <input type="text" id="routeNumber" list="bus" value="821DOWN" placeholder="Route number">
+                <input type="text" id="routeNumber" list="bus" value="821UP" placeholder="Route number">
             </div>
             
             <div class="form-group">
                 <label for="fromLocation">From</label>
-                <input type="text" id="fromLocation" list="stop" value="Jaffar Pur Kalan" placeholder="Source">
+                <input type="text" id="fromLocation" list="stop" value="Arjun Park" placeholder="Source">
             </div>
             
             <div class="form-group">
                 <label for="toLocation">To</label>
-                <input type="text" id="toLocation" list="stop" value="Arjun Park" placeholder="Destination">
+                <input type="text" id="toLocation" list="stop" value="Jaffar Pur Kalan" placeholder="Destination">
             </div>
         </div>
 
@@ -1366,6 +1367,13 @@
             document.getElementById('routeNumber').value = '835UP';
             document.getElementById('fromLocation').value = 'Arjun Park';
             document.getElementById('toLocation').value = 'Rawta Crossing';
+            updateTicketFields();
+        }
+
+        function f821DOWN() {
+            document.getElementById('routeNumber').value = '821DOWN';
+            document.getElementById('fromLocation').value = 'Jaffar Pur Kalan';
+            document.getElementById('toLocation').value = 'Arjun Park';
             updateTicketFields();
         }
 
