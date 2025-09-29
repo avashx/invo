@@ -879,6 +879,11 @@
     </style>
 </head>
 <body>
+    <!-- Emergency Debug Button -->
+    <button id="debug-init" style="position: fixed; top: 10px; right: 10px; z-index: 10000; background: #ff3b30; color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer;">
+        FORCE INIT
+    </button>
+    
     <div class="app-container">
         <div class="top-nav">
             <div class="nav-left">
@@ -1159,17 +1164,46 @@
         
         // Server URLs - local proxy preferred
         const SERVER_URLS = [
-            'http://localhost:3000',  // Default port from server.js
-            'https://bus-19wu.onrender.com'
+            'http://localhost:3001',  // New backend server
+            'http://localhost:3000',  // Fallback port
+            'https://bus-19wu.onrender.com' // External fallback
         ];
         
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded - Starting initialization');
+            addToLog('🚀 Application starting...', 'info');
+            
+            // Check if all required elements exist
+            const requiredElements = [
+                'locationStatus', 'radarDisplay', 'busList', 'nearestStopsDropdown', 
+                'nearestBusesDropdown', 'log-container'
+            ];
+            
+            let missingElements = [];
+            requiredElements.forEach(id => {
+                if (!document.getElementById(id)) {
+                    missingElements.push(id);
+                }
+            });
+            
+            if (missingElements.length > 0) {
+                console.error('Missing DOM elements:', missingElements);
+                addToLog(`❌ Missing DOM elements: ${missingElements.join(', ')}`, 'error');
+            } else {
+                console.log('✅ All required DOM elements found');
+                addToLog('✅ All DOM elements ready', 'success');
+            }
+            
             initializePage();
         });
 
         async function initializePage() {
+            console.log('🚀 Starting application initialization...');
             updateConnectionStatus('loading', 'Initializing...');
+            
+            // Add immediate visual feedback
+            document.getElementById('locationStatus').innerHTML = '🔄 Starting location request...';
             
             // Initialize date and ticket data
             initializeTicketData();
@@ -1199,16 +1233,29 @@
             // Add event listener for passengers input to update table
             document.getElementById('passengers').addEventListener('input', updateFareTable);
             
-            // Load CSV data
+            // Load CSV data first
+            addToLog('📂 Loading bus stops and routes data...', 'info');
             await loadCSVData();
             
-            // Get user location first
+            // Start location request immediately
+            addToLog('📍 Requesting location permission...', 'info');
             const locationFound = await getUserLocation();
             
+            // Show location request button if failed
+            if (!locationFound) {
+                addToLog('⚠️ Location request failed - showing fallback options', 'warning');
+                // The getUserLocation function already shows the retry/default buttons
+            } else {
+                addToLog('✅ Location access granted successfully', 'success');
+            }
+            
             // Fetch live data regardless of location
+            addToLog('🌐 Connecting to bus tracking API...', 'info');
             const dataFetched = await fetchLiveData();
             
             if (dataFetched) {
+                addToLog('✅ Successfully connected to live bus data', 'success');
+                
                 if (locationFound && userLocation) {
                     // Use new logic to find nearest stops and buses
                     addToLog(`🎯 Using location: ${userLocation.latitude.toFixed(4)}, ${userLocation.longitude.toFixed(4)}`, 'info');
@@ -1220,6 +1267,7 @@
                     const nearbyBuses = findNearestBuses(userLocation.latitude, userLocation.longitude, 4);
                     
                     if (nearbyBuses.length > 0) {
+                        addToLog(`🚌 Found ${nearbyBuses.length} nearby buses`, 'success');
                         updateNearestDisplay(nearestStops[0] || {stop_name: 'No stops found', distance: 0}, nearbyBuses, nearestStops);
                     } else {
                         addToLog('No nearby buses found, showing all buses', 'warning');
@@ -1233,9 +1281,11 @@
                 startAutoRefresh();
             } else {
                 // Even if data fetch failed, try to show something
-                addToLog('Data fetch failed, showing demo data', 'warning');
+                addToLog('❌ Data fetch failed, showing demo data', 'error');
                 showAllBuses(); // This will handle empty data gracefully
             }
+            
+            addToLog('🎉 Application initialization complete!', 'success');
         }
 
         // Load CSV files and find nearest stops
@@ -1997,14 +2047,28 @@
 
         // Log functions for real-time updates
         function addToLog(message, type = 'info') {
+            console.log(`[${type.toUpperCase()}] ${message}`);
+            
             const logContainer = document.getElementById('log-container');
-            if (!logContainer) return;
+            if (!logContainer) {
+                console.error('Log container not found!');
+                return;
+            }
             
             const logEntry = document.createElement('div');
             logEntry.className = `log-entry ${type}`;
             
             const timestamp = new Date().toLocaleTimeString();
             logEntry.innerHTML = `<span style="color: #64b5f6; font-size: 12px;">${timestamp}</span> - ${message}`;
+            
+            // Add appropriate border color
+            let borderColor = '#34c759'; // default success
+            switch(type) {
+                case 'warning': borderColor = '#ff9500'; break;
+                case 'error': borderColor = '#ff3b30'; break;
+                case 'info': borderColor = '#007aff'; break;
+            }
+            logEntry.style.borderLeft = `3px solid ${borderColor}`;
             
             // Add to top of log
             logContainer.insertBefore(logEntry, logContainer.firstChild);
@@ -2523,6 +2587,72 @@
             };
             document.head.appendChild(script);
         }
+
+        // Emergency debug button handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const debugBtn = document.getElementById('debug-init');
+            if (debugBtn) {
+                debugBtn.addEventListener('click', async function() {
+                    addToLog('🚨 EMERGENCY FORCE INITIALIZATION STARTED', 'warning');
+                    
+                    try {
+                        // Force location request
+                        addToLog('📍 Forcing location request...', 'info');
+                        if (navigator.geolocation) {
+                            navigator.geolocation.getCurrentPosition(
+                                async (position) => {
+                                    const { latitude, longitude } = position.coords;
+                                    addToLog(`📍 Got coordinates: ${latitude}, ${longitude}`, 'info');
+                                    
+                                    // Update user location
+                                    updateUserLocation(latitude, longitude);
+                                    
+                                    // Force data fetch
+                                    addToLog('🚌 Force fetching live data...', 'info');
+                                    await fetchLiveData();
+                                    
+                                    // Force nearest calculations
+                                    addToLog('🔍 Force calculating nearest stops/buses...', 'info');
+                                    const nearestStops = findNearestStops(latitude, longitude, 5);
+                                    const nearestBuses = findNearestBuses(latitude, longitude, 10);
+                                    
+                                    addToLog(`Found ${nearestStops.length} nearby stops and ${nearestBuses.length} nearby buses`, 'info');
+                                    
+                                    // Force UI updates
+                                    updateDropdowns(nearestStops, nearestBuses);
+                                    updateRadarDisplay(nearestBuses);
+                                    
+                                    addToLog('✅ FORCE INITIALIZATION COMPLETED!', 'info');
+                                },
+                                (error) => {
+                                    addToLog(`❌ Location error: ${error.message}`, 'error');
+                                    addToLog('Using Delhi center as fallback...', 'warning');
+                                    
+                                    // Use Delhi center
+                                    const delhiLat = 28.7041;
+                                    const delhiLng = 77.1025;
+                                    updateUserLocation(delhiLat, delhiLng);
+                                    
+                                    // Continue with Delhi location
+                                    fetchLiveData().then(() => {
+                                        const nearestStops = findNearestStops(delhiLat, delhiLng, 5);
+                                        const nearestBuses = findNearestBuses(delhiLat, delhiLng, 10);
+                                        updateDropdowns(nearestStops, nearestBuses);
+                                        updateRadarDisplay(nearestBuses);
+                                        addToLog('✅ FORCE INITIALIZATION COMPLETED WITH FALLBACK!', 'info');
+                                    });
+                                },
+                                { timeout: 5000, enableHighAccuracy: true, maximumAge: 0 }
+                            );
+                        } else {
+                            throw new Error('Geolocation not supported');
+                        }
+                    } catch (error) {
+                        addToLog(`❌ Debug initialization failed: ${error.message}`, 'error');
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
