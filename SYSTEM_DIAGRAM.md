@@ -183,7 +183,7 @@
 8. USER GENERATES TICKET
    User → Clicks "Generate Ticket"
    Browser → Collects form data
-   Browser → Redirects to: 
+   Browser → Redirects to:
             invoice.html?from=Kashmere+Gate&to=Connaught+Place
                         &route=764&bus=DL1PC1234&timestamp=1234567890
 
@@ -259,13 +259,13 @@
 
    function calculateDistance(lat1, lon1, lat2, lon2) {
        R = 6371 (Earth's radius in km)
-       
+
        dLat = (lat2 - lat1) * π/180
        dLon = (lon2 - lon1) * π/180
-       
+
        a = sin²(dLat/2) + cos(lat1) * cos(lat2) * sin²(dLon/2)
        c = 2 * atan2(√a, √(1-a))
-       
+
        return R * c (distance in km)
    }
 
@@ -285,7 +285,7 @@
            fetchNearestBuses()
        }
    }, 30000)
-   
+
    setInterval(() => {
        countdown--
        if (countdown <= 0) countdown = 30

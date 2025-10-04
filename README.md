@@ -5,11 +5,12 @@ A comprehensive web-based application for Delhi Transport Corporation (DTC) that
 ## 🚀 Features
 
 ### Live Ticket Booking (`/live`)
+
 - **Automatic Location Detection**: Uses HTML5 Geolocation API to detect user's current location
 - **Smart Bus Discovery**: Automatically finds and displays:
   - Top 5 nearest bus stops
   - Top 10 nearest buses with real-time positions
-- **Auto-populated Forms**: 
+- **Auto-populated Forms**:
   - Source stop auto-filled from nearest location
   - Route number and bus registration auto-filled from selected bus
   - User only needs to enter destination
@@ -18,6 +19,7 @@ A comprehensive web-based application for Delhi Transport Corporation (DTC) that
 - **Destination Autocomplete**: Smart search for destination stops
 
 ### Bus Tracking Map (`/track`)
+
 - Real-time bus positions on interactive map
 - Bus stop visualization at higher zoom levels
 - Live status indicators
@@ -25,6 +27,7 @@ A comprehensive web-based application for Delhi Transport Corporation (DTC) that
 - Bus check-in system for conductors
 
 ### Ticket Generation (`invoice.html`)
+
 - Professional ticket design with QR codes
 - Print-ready format
 - Timestamp and unique ticket IDs
@@ -42,16 +45,19 @@ Before running this application, ensure you have:
 ## 🛠️ Installation
 
 1. **Clone the repository**
+
    ```bash
    cd /Users/Vashishth/CODING/invo
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
    This will install:
+
    - `express` - Web framework
    - `ejs` - Template engine for rendering dynamic pages
    - `socket.io` - Real-time bidirectional communication
@@ -62,8 +68,9 @@ Before running this application, ensure you have:
    - `dotenv` - Environment variable management
 
 3. **Set up environment variables**
-   
+
    Create a `.env` file in the root directory:
+
    ```env
    PORT=3001
    MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/busTrackerDB?retryWrites=true&w=majority
@@ -80,11 +87,13 @@ Before running this application, ensure you have:
 ## 🚦 Running the Application
 
 ### Development Mode (with auto-restart)
+
 ```bash
 npm run dev
 ```
 
 ### Production Mode
+
 ```bash
 npm start
 ```
@@ -96,6 +105,7 @@ The server will start on `http://localhost:3001`
 ### For Passengers
 
 1. **Quick Ticket Booking** (Recommended)
+
    - Visit: `http://localhost:3001/live`
    - Allow location access when prompted
    - Wait for nearby buses and stops to load (auto-refreshes every 30s)
@@ -105,6 +115,7 @@ The server will start on `http://localhost:3001`
    - Your ticket will be generated with all details pre-filled!
 
 2. **Bus Tracking**
+
    - Visit: `http://localhost:3001/track`
    - View real-time bus positions on map
    - Zoom in to see bus stops
@@ -118,6 +129,7 @@ The server will start on `http://localhost:3001`
 ### For Conductors
 
 1. **Bus Check-in**
+
    - Access the tracking page
    - Use the check-in modal to record:
      - Non-ticket holders count
@@ -131,6 +143,7 @@ The server will start on `http://localhost:3001`
 ## 🏗️ Architecture
 
 ### Backend (`server.js`)
+
 - Express.js server with Socket.IO for real-time updates
 - Fetches GTFS real-time data every 10 seconds
 - Calculates distances using Haversine formula
@@ -147,6 +160,7 @@ The server will start on `http://localhost:3001`
 ### Frontend
 
 #### live.ejs (Live Booking Page)
+
 - **HTML5 Geolocation**: High-accuracy location detection
 - **Status Indicators**: Real-time connection, location, and bus count status
 - **Distance Calculation**: Client-side Haversine formula for instant feedback
@@ -155,6 +169,7 @@ The server will start on `http://localhost:3001`
 - **Smart Form Validation**: Enables submit only when all fields are valid
 
 #### bapp.ejs (Tracking Page)
+
 - **Leaflet.js**: Interactive map with custom markers
 - **Socket.IO Client**: Real-time bus position updates
 - **Custom Icons**: Bus markers with labels, stop markers, user location
@@ -162,6 +177,7 @@ The server will start on `http://localhost:3001`
 - **Analytics Dashboard**: Charts and statistics
 
 #### invoice.html (Ticket Generator)
+
 - **dom-to-image**: Converts ticket to downloadable image
 - **Custom Fonts**: Antic Didone for authentic ticket appearance
 - **QR Code Generation**: For ticket verification
@@ -182,12 +198,12 @@ Edit `CONFIG` object in `server.js`:
 
 ```javascript
 const CONFIG = {
-    PORT: process.env.PORT || 3001,
-    MONGODB_URI: 'your_mongodb_uri',
-    GTFS_URL: 'https://otd.delhi.gov.in/api/realtime/VehiclePositions.pb',
-    BUS_FETCH_INTERVAL: 10000, // 10 seconds
-    MAX_RETRIES: 3,
-    ZOOM_THRESHOLD: 14 // Zoom level to show stops
+  PORT: process.env.PORT || 3001,
+  MONGODB_URI: "your_mongodb_uri",
+  GTFS_URL: "https://otd.delhi.gov.in/api/realtime/VehiclePositions.pb",
+  BUS_FETCH_INTERVAL: 10000, // 10 seconds
+  MAX_RETRIES: 3,
+  ZOOM_THRESHOLD: 14, // Zoom level to show stops
 };
 ```
 
@@ -201,22 +217,26 @@ const CONFIG = {
 ## 🐛 Troubleshooting
 
 ### Location not working
+
 - Ensure HTTPS or localhost (required for Geolocation API)
 - Check browser permissions for location access
 - Try refreshing the page
 
 ### No buses showing
+
 - Verify GTFS API is accessible
 - Check internet connection
 - Ensure server is fetching data (check console logs)
 - API might have rate limits - wait and retry
 
 ### EJS templates not rendering
+
 - Ensure EJS is installed: `npm install ejs`
 - Check that `app.set('view engine', 'ejs')` is in server.js
 - Verify .ejs files are in the correct directory
 
 ### CSS not loading
+
 - Clear browser cache
 - Check browser console for 404 errors
 - Ensure static file serving is configured
@@ -224,31 +244,33 @@ const CONFIG = {
 ## 🚀 Deployment
 
 ### Render.com / Heroku
+
 1. Set environment variables in platform dashboard
 2. Ensure `package.json` has correct start script
 3. Set `PORT` environment variable
 4. Deploy from Git repository
 
 ### Environment Variables Required
+
 - `PORT` - Server port
 - `MONGODB_URI` - MongoDB connection string
 - `GTFS_API_KEY` - API key for GTFS data (if required)
 
 ## 📄 API Endpoints Summary
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/` | GET | Redirects to `/live` |
-| `/live` | GET | Live ticket booking page (auto-location) |
-| `/track` | GET | Bus tracking map page |
-| `/api/buses` | GET | Get all active buses |
-| `/api/all-stops` | GET | Get all bus stops |
-| `/api/nearest-stops/:lat/:lng` | GET | Get nearest stops to coordinates |
-| `/api/nearest-buses/:lat/:lng` | GET | Get nearest buses to coordinates |
-| `/api/bookBus` | POST | Book a bus ticket |
-| `/api/checkBus` | POST | Conductor check-in |
-| `/api/recordAttendance` | POST | Record conductor attendance |
-| `/api/health` | GET | Server health check |
+| Endpoint                       | Method | Description                              |
+| ------------------------------ | ------ | ---------------------------------------- |
+| `/`                            | GET    | Redirects to `/live`                     |
+| `/live`                        | GET    | Live ticket booking page (auto-location) |
+| `/track`                       | GET    | Bus tracking map page                    |
+| `/api/buses`                   | GET    | Get all active buses                     |
+| `/api/all-stops`               | GET    | Get all bus stops                        |
+| `/api/nearest-stops/:lat/:lng` | GET    | Get nearest stops to coordinates         |
+| `/api/nearest-buses/:lat/:lng` | GET    | Get nearest buses to coordinates         |
+| `/api/bookBus`                 | POST   | Book a bus ticket                        |
+| `/api/checkBus`                | POST   | Conductor check-in                       |
+| `/api/recordAttendance`        | POST   | Record conductor attendance              |
+| `/api/health`                  | GET    | Server health check                      |
 
 ## 🎯 Future Enhancements
 

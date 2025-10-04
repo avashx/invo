@@ -4,8 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DTC Live Ticket Booking</title>
-    <link href="https://fonts.googleapis.com/css2?family=Antic+Didone&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Antic+Didone&display=swap" rel="stylesheet">
     <style>
+        @font-face {
+            font-family: 'alo';
+            src: url('./alo.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,188 +20,265 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --card-bg: rgba(255, 255, 255, 0.95);
-            --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.07);
-            --shadow-medium: 0 10px 25px rgba(0, 0, 0, 0.1);
-            --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.15);
-            --text-dark: #2d3748;
-            --text-medium: #4a5568;
-            --text-light: #718096;
-            --border-color: #e2e8f0;
-            --success-color: #48bb78;
-            --warning-color: #ed8936;
-            --error-color: #f56565;
-            --live-pulse: #ef4444;
-        }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            background: #f8f9fa;
             min-height: 100vh;
-            padding: 20px;
-            color: var(--text-dark);
+            padding: 0;
+            color: #1c1c1e;
             overflow-x: hidden;
+            line-height: 1.5;
         }
 
-        .container {
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             max-width: 420px;
             margin: 0 auto;
-            animation: fadeInUp 0.6s ease-out;
+            background: white;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        /* Top Navigation */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            border-bottom: 1px solid #e5e5ea;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        /* Header Section */
-        .header {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-medium);
-            margin-bottom: 20px;
+        .nav-title {
+            font-size: 22px;
+            font-weight: 400;
+            color: #1c1c1e;
+            letter-spacing: 1px;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .status-indicator-top {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #8e8e93;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #34c759;
+            border-radius: 50%;
+            animation: pulse-loading 1.5s infinite;
+        }
+
+        @keyframes pulse-loading {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        /* Radar Section */
+        .radar-section {
+            background: white;
+            padding: 30px 20px;
+            margin: 0;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .radar-header {
             text-align: center;
+            margin-bottom: 30px;
         }
 
-        .header h1 {
-            font-family: 'Antic Didone', serif;
-            font-size: 28px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .radar-title {
+            font-size: 26px;
+            font-weight: 400;
+            color: #1c1c1e;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .radar-subtitle {
+            font-size: 15px;
+            color: #8e8e93;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .radar-display {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 0 auto 30px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            border: 2px solid #e5e5ea;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .radar-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: #1c1c1e;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 0 0 2px rgba(28, 28, 30, 0.2);
+        }
+
+        .radar-rings .ring {
+            position: absolute;
+            border: 1px solid #e5e5ea;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ring-1 { width: 64px; height: 64px; }
+        .ring-2 { width: 128px; height: 128px; }
+        .ring-3 { width: 192px; height: 192px; }
+        .ring-4 { width: 256px; height: 256px; }
+        .ring-5 { width: 320px; height: 320px; }
+
+        .radar-sweep {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 160px;
+            height: 2px;
+            background: linear-gradient(to right, rgba(28, 28, 30, 0.8), transparent);
+            transform-origin: left center;
+            transform: translate(0, -50%) rotate(0deg);
+            animation: sweep-smooth 4s linear infinite;
+        }
+
+        @keyframes sweep-smooth {
+            0% { transform: translate(0, -50%) rotate(0deg); }
+            100% { transform: translate(0, -50%) rotate(360deg); }
+        }
+
+        .distance-label {
+            position: absolute;
+            color: #8e8e93;
+            font-size: 10px;
+            font-weight: 500;
+            pointer-events: none;
+            background: white;
+            padding: 2px 6px;
+            border-radius: 6px;
+            border: 1px solid #e5e5ea;
+        }
+
+        .label-1 { top: 140px; right: 15px; }
+        .label-2 { top: 90px; right: 15px; }
+        .label-3 { top: 40px; right: 15px; }
+
+        .radar-bus {
+            background: #1c1c1e;
+            color: white;
+            border: 2px solid #1c1c1e;
+            padding: 4px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 9px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translate(-50%, -50%);
+            letter-spacing: 0.3px;
+            min-width: 45px;
+            text-align: center;
+            line-height: 1.2;
+            box-shadow: 0 2px 6px rgba(28, 28, 30, 0.2);
+        }
+
+        .radar-bus .bus-number-radar {
+            font-weight: 700;
+            font-size: 10px;
+        }
+
+        .radar-bus .bus-distance-radar {
+            font-size: 7px;
+            opacity: 0.7;
+        }
+
+        .radar-bus:hover {
+            background: #007aff;
+            border-color: #007aff;
+            transform: translate(-50%, -50%) scale(1.15);
+            z-index: 15;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+        }
+
+        .radar-bus.selected {
+            background: #007aff;
+            border-color: #007aff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+            transform: translate(-50%, -50%) scale(1.15);
+            z-index: 15;
+        }
+
+        /* Location Info */
+        .location-section {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .location-info-box {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #e5e5ea;
+        }
+
+        .location-title-small {
+            font-size: 13px;
+            color: #8e8e93;
             margin-bottom: 8px;
         }
 
-        .header p {
-            color: var(--text-medium);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        /* Status Bar */
-        .status-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            gap: 10px;
-        }
-
-        .status-item {
-            flex: 1;
-            background: var(--card-bg);
-            padding: 12px;
-            border-radius: 12px;
-            box-shadow: var(--shadow-light);
-            text-align: center;
-            transition: transform 0.2s ease;
-        }
-
-        .status-item:active {
-            transform: scale(0.98);
-        }
-
-        .status-label {
-            font-size: 11px;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .location-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1c1c1e;
             margin-bottom: 4px;
         }
 
-        .status-value {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .live-indicator {
-            width: 8px;
-            height: 8px;
-            background: var(--live-pulse);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.5;
-                transform: scale(1.3);
-            }
-        }
-
-        .status-loading {
-            color: var(--warning-color);
-        }
-
-        .status-connected {
-            color: var(--success-color);
-        }
-
-        .status-error {
-            color: var(--error-color);
-        }
-
-        /* Location Section */
-        .location-section {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-medium);
-            margin-bottom: 20px;
-        }
-
-        .location-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .location-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .location-coords {
+            font-size: 12px;
+            color: #8e8e93;
         }
 
         .refresh-btn {
-            background: var(--primary-gradient);
+            background: #1c1c1e;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-light);
+            transition: all 0.2s ease;
+            margin-top: 12px;
         }
 
         .refresh-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
+            background: #007aff;
+            transform: translateY(-1px);
         }
 
         .refresh-btn:active {
@@ -204,136 +288,130 @@
         .refresh-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
-        }
-
-        .location-info {
-            background: #f7fafc;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 13px;
-            color: var(--text-medium);
-            line-height: 1.6;
-        }
-
-        .location-accuracy {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 8px;
-            font-size: 11px;
-            color: var(--text-light);
         }
 
         /* Stops Section */
-        .stops-section, .buses-section {
-            background: var(--card-bg);
+        .stops-section {
+            background: white;
             padding: 20px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-medium);
-            margin-bottom: 20px;
+            border-bottom: 1px solid #f2f2f7;
         }
 
         .section-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-dark);
+            font-size: 18px;
+            font-weight: 400;
+            color: #1c1c1e;
             margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            letter-spacing: -0.3px;
         }
 
-        .count-badge {
-            background: var(--primary-gradient);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .stop-item, .bus-item {
-            background: #f7fafc;
-            padding: 14px;
+        .stop-item {
+            background: #f8f9fa;
+            padding: 16px;
             border-radius: 12px;
-            margin-bottom: 10px;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
+            margin-bottom: 8px;
+            border: 1px solid #e5e5ea;
+            transition: all 0.2s ease;
             cursor: pointer;
         }
 
-        .stop-item:hover, .bus-item:hover {
-            border-color: #667eea;
-            transform: translateX(4px);
-            box-shadow: var(--shadow-light);
+        .stop-item:hover {
+            background: #e5e5ea;
         }
 
-        .stop-item:active, .bus-item:active {
-            transform: scale(0.98);
+        .stop-item.selected {
+            background: #1c1c1e;
+            border-color: #1c1c1e;
+            color: white;
         }
 
-        .stop-item.selected, .bus-item.selected {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-            border-color: #667eea;
+        .stop-item.selected .stop-name {
+            color: white;
         }
 
-        .item-main {
+        .stop-item.selected .stop-distance {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .stop-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1c1c1e;
+            margin-bottom: 4px;
+        }
+
+        .stop-distance {
+            font-size: 13px;
+            color: #8e8e93;
+        }
+
+        /* Bus List Section */
+        .bus-list-section {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .bus-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e5e5ea;
             margin-bottom: 8px;
         }
 
-        .item-name {
-            font-weight: 600;
-            color: var(--text-dark);
-            font-size: 14px;
-            flex: 1;
+        .bus-item:hover {
+            background: #e5e5ea;
         }
 
-        .distance-badge {
-            background: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-medium);
-            box-shadow: var(--shadow-light);
+        .bus-item.selected {
+            background: #007aff;
+            color: white;
+            border-color: #007aff;
         }
 
-        .bus-info {
-            display: flex;
-            gap: 12px;
-            margin-top: 8px;
+        .bus-item.selected .bus-number,
+        .bus-item.selected .bus-route {
+            color: white;
         }
 
-        .bus-detail {
+        .bus-item.selected .bus-distance {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .bus-info-left {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 4px;
         }
 
-        .bus-detail-label {
-            font-size: 10px;
-            color: var(--text-light);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .bus-detail-value {
-            font-size: 13px;
+        .bus-number {
+            font-size: 16px;
             font-weight: 600;
-            color: var(--text-dark);
+            color: #1c1c1e;
+        }
+
+        .bus-route {
+            font-size: 14px;
+            color: #8e8e93;
+        }
+
+        .bus-distance {
+            font-size: 14px;
+            font-weight: 500;
+            color: #8e8e93;
         }
 
         /* Ticket Form */
         .ticket-form {
-            background: var(--card-bg);
+            background: white;
             padding: 20px;
-            border-radius: 20px;
-            box-shadow: var(--shadow-medium);
-            margin-bottom: 20px;
+            border-bottom: 1px solid #f2f2f7;
         }
 
         .form-group {
@@ -342,52 +420,53 @@
 
         .form-label {
             display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-dark);
-            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #8e8e93;
+            margin-bottom: 6px;
         }
 
-        .form-input, .form-select {
+        .form-input {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid var(--border-color);
+            border: 1px solid #e5e5ea;
             border-radius: 12px;
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.3s ease;
+            font-size: 16px;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            transition: all 0.2s ease;
             background: white;
-            color: var(--text-dark);
+            color: #1c1c1e;
         }
 
-        .form-input:focus, .form-select:focus {
+        .form-input:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #1c1c1e;
+            box-shadow: 0 0 0 2px rgba(28, 28, 30, 0.1);
         }
 
-        .form-input:disabled, .form-select:disabled {
-            background: #f7fafc;
-            color: var(--text-light);
+        .form-input:disabled {
+            background: #f8f9fa;
+            color: #8e8e93;
             cursor: not-allowed;
         }
 
         .form-input::placeholder {
-            color: var(--text-light);
+            color: #8e8e93;
         }
 
         .autocomplete-results {
             position: absolute;
-            width: 100%;
+            width: calc(100% - 40px);
             max-height: 200px;
             overflow-y: auto;
             background: white;
-            border: 2px solid var(--border-color);
+            border: 1px solid #e5e5ea;
             border-top: none;
             border-radius: 0 0 12px 12px;
-            box-shadow: var(--shadow-medium);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             display: none;
+            margin-top: -12px;
         }
 
         .autocomplete-item {
@@ -395,7 +474,7 @@
             cursor: pointer;
             transition: background 0.2s ease;
             font-size: 14px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid #f2f2f7;
         }
 
         .autocomplete-item:last-child {
@@ -403,29 +482,27 @@
         }
 
         .autocomplete-item:hover {
-            background: #f7fafc;
+            background: #f8f9fa;
         }
 
         /* Generate Button */
         .generate-btn {
             width: 100%;
             padding: 16px;
-            background: var(--primary-gradient);
+            background: #1c1c1e;
             color: white;
             border: none;
             border-radius: 12px;
             font-size: 16px;
-            font-weight: 700;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-medium);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            margin-top: 16px;
         }
 
         .generate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-heavy);
+            background: #007aff;
+            transform: translateY(-1px);
         }
 
         .generate-btn:active {
@@ -441,11 +518,11 @@
         /* Loading Spinner */
         .loading-spinner {
             display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(28, 28, 30, 0.3);
             border-radius: 50%;
-            border-top-color: white;
+            border-top-color: #1c1c1e;
             animation: spin 0.8s linear infinite;
         }
 
@@ -457,7 +534,7 @@
         .empty-state {
             text-align: center;
             padding: 40px 20px;
-            color: var(--text-light);
+            color: #8e8e93;
         }
 
         .empty-state-icon {
@@ -471,21 +548,44 @@
             line-height: 1.6;
         }
 
-        /* Auto-refresh indicator */
-        .auto-refresh {
-            text-align: center;
-            padding: 12px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            margin-bottom: 20px;
-            font-size: 12px;
-            color: var(--text-medium);
-            box-shadow: var(--shadow-light);
+        /* Status Bar Bottom */
+        .status-bar-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #1c1c1e;
+            background: white;
+            padding: 12px 20px;
+            border-top: 1px solid #f2f2f7;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 420px;
+            margin: 0 auto;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
         }
 
-        .auto-refresh-timer {
-            font-weight: 700;
-            color: var(--success-color);
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #34c759;
+        }
+
+        .info-message {
+            background: #f8f9fa;
+            border-left: 3px solid #1c1c1e;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #1c1c1e;
+            line-height: 1.6;
         }
 
         /* Responsive */
@@ -569,80 +669,77 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>🚌 DTC Live Booking</h1>
-            <p>Smart ticket generation with live data</p>
-        </div>
-
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-item">
-                <div class="status-label">Connection</div>
-                <div class="status-value" id="connection-status">
-                    <span class="loading-spinner"></span>
-                    <span>Loading</span>
-                </div>
-            </div>
-            <div class="status-item">
-                <div class="status-label">Location</div>
-                <div class="status-value" id="location-status">
-                    <span>Waiting</span>
-                </div>
-            </div>
-            <div class="status-item">
-                <div class="status-label">Buses</div>
-                <div class="status-value" id="bus-count">
-                    <span>0</span>
-                </div>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <div class="nav-title">LIVE BOOKING</div>
+            <div class="status-indicator-top">
+                <div class="live-dot" id="live-indicator"></div>
+                <span id="status-text">Loading...</span>
             </div>
         </div>
 
-        <!-- Auto-refresh Indicator -->
-        <div class="auto-refresh">
-            Next update in <span class="auto-refresh-timer" id="refresh-timer">30</span>s
-            <span class="live-indicator"></span>
+        <!-- Radar Section -->
+        <div class="radar-section">
+            <div class="radar-header">
+                <h2 class="radar-title">Nearest Buses</h2>
+                <p class="radar-subtitle">Tap any bus to select</p>
+            </div>
+            
+            <div class="radar-display">
+                <div class="radar-rings">
+                    <div class="ring ring-1"></div>
+                    <div class="ring ring-2"></div>
+                    <div class="ring ring-3"></div>
+                    <div class="ring ring-4"></div>
+                    <div class="ring ring-5"></div>
+                </div>
+                
+                <div class="distance-label label-1">500m</div>
+                <div class="distance-label label-2">1km</div>
+                <div class="distance-label label-3">2km</div>
+                
+                <div class="radar-sweep"></div>
+                <div class="radar-center"></div>
+                
+                <!-- Buses will be dynamically added here -->
+                <div id="radar-buses"></div>
+            </div>
+
+            <div style="text-align: center; color: #8e8e93; font-size: 13px; margin-top: 10px;">
+                <span id="bus-count">0</span> buses found · Updates every 30s
+            </div>
         </div>
 
-        <!-- Location Section -->
+        <!-- Location Info -->
         <div class="location-section">
-            <div class="location-header">
-                <div class="location-title">
-                    📍 Your Location
-                </div>
+            <div class="location-info-box">
+                <div class="location-title-small">YOUR LOCATION</div>
+                <div class="location-name" id="location-name">Detecting...</div>
+                <div class="location-coords" id="location-coords">—</div>
                 <button class="refresh-btn" id="refresh-location" onclick="getUserLocation()">
-                    Refresh
+                    Refresh Location
                 </button>
-            </div>
-            <div class="location-info" id="location-info">
-                <div>Requesting location access...</div>
             </div>
         </div>
 
         <!-- Nearest Stops -->
         <div class="stops-section">
-            <div class="section-title">
-                🚏 Nearest Bus Stops
-                <span class="count-badge" id="stops-count">0</span>
-            </div>
+            <h3 class="section-title">Nearest Bus Stops</h3>
             <div id="stops-list">
                 <div class="empty-state">
-                    <div class="empty-state-icon">🔍</div>
+                    <div class="empty-state-icon">�</div>
                     <div class="empty-state-text">Finding nearest stops...</div>
                 </div>
             </div>
         </div>
 
-        <!-- Nearest Buses -->
-        <div class="buses-section">
-            <div class="section-title">
-                🚍 Nearest Buses
-                <span class="count-badge" id="buses-count">0</span>
-            </div>
+        <!-- Bus List -->
+        <div class="bus-list-section">
+            <h3 class="section-title">All Nearby Buses</h3>
             <div id="buses-list">
                 <div class="empty-state">
-                    <div class="empty-state-icon">🔍</div>
+                    <div class="empty-state-icon">�</div>
                     <div class="empty-state-text">Finding nearest buses...</div>
                 </div>
             </div>
@@ -650,10 +747,10 @@
 
         <!-- Ticket Form -->
         <div class="ticket-form">
-            <div class="section-title">🎫 Generate Ticket</div>
+            <h3 class="section-title">Generate Ticket</h3>
             
             <div class="info-message">
-                Select a bus from the list above to auto-fill the form. You only need to enter your destination!
+                Select a bus from the radar or list above to auto-fill the form. Only enter your destination!
             </div>
 
             <form id="ticket-form" onsubmit="generateTicket(event)">
@@ -663,7 +760,7 @@
                         type="text" 
                         id="from-location" 
                         class="form-input" 
-                        placeholder="Will be auto-filled from nearest stop"
+                        placeholder="Auto-filled from nearest stop"
                         disabled
                         required
                     >
@@ -688,7 +785,7 @@
                         type="text" 
                         id="route-number" 
                         class="form-input" 
-                        placeholder="Will be auto-filled from selected bus"
+                        placeholder="Auto-filled from selected bus"
                         disabled
                         required
                     >
@@ -700,7 +797,7 @@
                         type="text" 
                         id="bus-registration" 
                         class="form-input" 
-                        placeholder="Will be auto-filled from selected bus"
+                        placeholder="Auto-filled from selected bus"
                         disabled
                         required
                     >
@@ -710,6 +807,12 @@
                     Generate Ticket
                 </button>
             </form>
+        </div>
+
+        <!-- Status Bar Bottom -->
+        <div class="status-bar-bottom">
+            <span class="status-dot"></span>
+            <span id="update-status">Waiting for location...</span>
         </div>
     </div>
 
@@ -750,45 +853,42 @@
             return `${distance.toFixed(2)}km`;
         }
 
-        // Update connection status
-        function updateConnectionStatus(status, text) {
-            const statusEl = document.getElementById('connection-status');
-            statusEl.className = 'status-value status-' + status;
-            statusEl.innerHTML = status === 'loading' 
-                ? '<span class="loading-spinner"></span><span>' + text + '</span>'
-                : '<span>' + text + '</span>';
+        // Update status
+        function updateStatus(text) {
+            document.getElementById('status-text').textContent = text;
+            document.getElementById('update-status').textContent = text;
         }
 
-        // Update location status
-        function updateLocationStatus(text, accuracy = null) {
-            const statusEl = document.getElementById('location-status');
-            statusEl.innerHTML = '<span>' + text + '</span>';
+        // Update location display
+        function updateLocationDisplay(stopName = null) {
+            const locationNameEl = document.getElementById('location-name');
+            const locationCoordsEl = document.getElementById('location-coords');
             
-            const locationInfo = document.getElementById('location-info');
             if (userLocation) {
-                locationInfo.innerHTML = `
-                    <div><strong>Coordinates:</strong> ${userLocation.latitude.toFixed(6)}, ${userLocation.longitude.toFixed(6)}</div>
-                    ${accuracy ? `<div class="location-accuracy">📍 Accuracy: ±${Math.round(accuracy)}m</div>` : ''}
-                `;
+                if (stopName) {
+                    locationNameEl.textContent = stopName;
+                } else {
+                    locationNameEl.textContent = 'Location Detected';
+                }
+                locationCoordsEl.textContent = `${userLocation.latitude.toFixed(6)}, ${userLocation.longitude.toFixed(6)}`;
             } else {
-                locationInfo.innerHTML = '<div>' + text + '</div>';
+                locationNameEl.textContent = 'Detecting...';
+                locationCoordsEl.textContent = '—';
             }
         }
 
         // Get user's location
         function getUserLocation() {
-            updateConnectionStatus('loading', 'Locating');
-            updateLocationStatus('Requesting location...');
+            updateStatus('Requesting location...');
             
             if (!navigator.geolocation) {
-                updateConnectionStatus('error', 'Error');
-                updateLocationStatus('Geolocation not supported by your browser');
+                updateStatus('Geolocation not supported');
                 return;
             }
 
             const refreshBtn = document.getElementById('refresh-location');
             refreshBtn.disabled = true;
-            refreshBtn.innerHTML = '<span class="loading-spinner"></span>';
+            refreshBtn.innerHTML = '<span class="loading-spinner"></span> Loading...';
 
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -798,7 +898,8 @@
                         accuracy: position.coords.accuracy
                     };
 
-                    updateLocationStatus('Located ✓', position.coords.accuracy);
+                    updateStatus('Location acquired');
+                    updateLocationDisplay();
                     console.log('Location acquired:', userLocation);
 
                     // Fetch nearest stops and buses
@@ -806,7 +907,7 @@
                     fetchNearestBuses();
 
                     refreshBtn.disabled = false;
-                    refreshBtn.textContent = 'Refresh';
+                    refreshBtn.textContent = 'Refresh Location';
                 },
                 (error) => {
                     console.error('Geolocation error:', error);
@@ -824,8 +925,7 @@
                             break;
                     }
 
-                    updateConnectionStatus('error', 'Error');
-                    updateLocationStatus(errorMsg);
+                    updateStatus(errorMsg);
                     
                     refreshBtn.disabled = false;
                     refreshBtn.textContent = 'Retry';
@@ -867,12 +967,11 @@
                     nearestStops = data.stops;
                     displayNearestStops();
                     
-                    // Auto-select the nearest stop
+                    // Auto-select the nearest stop and update location display
                     if (nearestStops.length > 0) {
                         selectStop(nearestStops[0]);
+                        updateLocationDisplay(nearestStops[0].name);
                     }
-
-                    document.getElementById('stops-count').textContent = nearestStops.length;
                 }
             } catch (error) {
                 console.error('Error fetching nearest stops:', error);
@@ -889,7 +988,7 @@
         async function fetchNearestBuses() {
             if (!userLocation) return;
 
-            updateConnectionStatus('loading', 'Loading');
+            updateStatus('Loading buses...');
 
             try {
                 const response = await fetch(
@@ -902,22 +1001,22 @@
                     displayNearestBuses();
                     
                     document.getElementById('bus-count').textContent = nearestBuses.length;
-                    document.getElementById('buses-count').textContent = nearestBuses.length;
                     
-                    updateConnectionStatus('connected', 'Connected');
+                    updateStatus(`${nearestBuses.length} buses found · Connected`);
                     
                     // Reset refresh timer
                     refreshSeconds = 30;
                 }
             } catch (error) {
                 console.error('Error fetching nearest buses:', error);
-                updateConnectionStatus('error', 'Error');
+                updateStatus('Error loading buses');
                 document.getElementById('buses-list').innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">⚠️</div>
                         <div class="empty-state-text">Failed to load buses. Please refresh.</div>
                     </div>
                 `;
+                document.getElementById('radar-buses').innerHTML = '';
             }
         }
 
@@ -938,16 +1037,18 @@
             stopsList.innerHTML = nearestStops.map((stop, index) => `
                 <div class="stop-item ${selectedStop && selectedStop.name === stop.name ? 'selected' : ''}" 
                      onclick="selectStop(${JSON.stringify(stop).replace(/"/g, '&quot;')})">
-                    <div class="item-main">
-                        <div class="item-name">${index + 1}. ${stop.name}</div>
-                        <div class="distance-badge">${formatDistance(stop.distance)}</div>
-                    </div>
+                    <div class="stop-name">${stop.name}</div>
+                    <div class="stop-distance">${formatDistance(stop.distance)} away</div>
                 </div>
             `).join('');
         }
 
-        // Display nearest buses
+        // Display nearest buses on radar
         function displayNearestBuses() {
+            // Update radar
+            displayBusesOnRadar();
+            
+            // Update list
             const busesList = document.getElementById('buses-list');
             
             if (nearestBuses.length === 0) {
@@ -963,22 +1064,54 @@
             busesList.innerHTML = nearestBuses.map((bus, index) => `
                 <div class="bus-item ${selectedBus && selectedBus.busNo === bus.busNo ? 'selected' : ''}" 
                      onclick="selectBus(${JSON.stringify(bus).replace(/"/g, '&quot;')})">
-                    <div class="item-main">
-                        <div class="item-name">#${index + 1} ${bus.busNo}</div>
-                        <div class="distance-badge">${formatDistance(bus.distance)}</div>
+                    <div class="bus-info-left">
+                        <div class="bus-number">#${index + 1} ${bus.busNo}</div>
+                        <div class="bus-route">${bus.routeName || bus.routeNo}</div>
                     </div>
-                    <div class="bus-info">
-                        <div class="bus-detail">
-                            <div class="bus-detail-label">Route</div>
-                            <div class="bus-detail-value">${bus.routeName || bus.routeNo}</div>
-                        </div>
-                        <div class="bus-detail">
-                            <div class="bus-detail-label">Speed</div>
-                            <div class="bus-detail-value">${Math.round(bus.speed || 0)} km/h</div>
-                        </div>
-                    </div>
+                    <div class="bus-distance">${formatDistance(bus.distance)}</div>
                 </div>
             `).join('');
+        }
+
+        // Display buses on radar (10 buses max)
+        function displayBusesOnRadar() {
+            const radarBuses = document.getElementById('radar-buses');
+            const maxDistance = nearestBuses.length > 0 ? nearestBuses[Math.min(9, nearestBuses.length - 1)].distance : 2;
+            const radarRadius = 160; // Radius of radar in pixels
+            
+            if (nearestBuses.length === 0) {
+                radarBuses.innerHTML = '';
+                return;
+            }
+
+            // Display only top 10 buses
+            const top10Buses = nearestBuses.slice(0, 10);
+            
+            radarBuses.innerHTML = top10Buses.map((bus, index) => {
+                // Calculate position on radar
+                // Bus 1 (index 0) = innermost ring (closest)
+                // Bus 10 (index 9) = outermost ring (furthest)
+                const normalizedDistance = bus.distance / maxDistance;
+                const distanceFromCenter = Math.min(normalizedDistance * radarRadius, radarRadius);
+                
+                // Random angle for visual distribution
+                const angle = (index * 36 + Math.random() * 30) * (Math.PI / 180);
+                
+                // Calculate x, y coordinates
+                const x = 160 + (distanceFromCenter * Math.cos(angle));
+                const y = 160 + (distanceFromCenter * Math.sin(angle));
+                
+                const isSelected = selectedBus && selectedBus.busNo === bus.busNo;
+                
+                return `
+                    <div class="radar-bus ${isSelected ? 'selected' : ''}" 
+                         style="left: ${x}px; top: ${y}px;"
+                         onclick='selectBusFromRadar(${JSON.stringify(bus).replace(/"/g, "&quot;")})'>
+                        <div class="bus-number-radar">${bus.routeNo}</div>
+                        <div class="bus-distance-radar">${formatDistance(bus.distance)}</div>
+                    </div>
+                `;
+            }).join('');
         }
 
         // Select a stop
@@ -995,7 +1128,13 @@
             document.getElementById('route-number').value = `${bus.routeNo} (${bus.routeName})`;
             document.getElementById('bus-registration').value = bus.busNo;
             displayNearestBuses();
+            displayNearestStops();
             checkFormValidity();
+        }
+
+        // Select a bus from radar
+        function selectBusFromRadar(bus) {
+            selectBus(bus);
         }
 
         // Check if form is valid and enable/disable submit button
@@ -1115,8 +1254,8 @@
         window.addEventListener('DOMContentLoaded', function() {
             console.log('DTC Live Booking initialized');
             
-            // Update connection status
-            updateConnectionStatus('loading', 'Connecting');
+            // Update status
+            updateStatus('Initializing...');
             
             // Fetch all stops for autocomplete
             fetchAllStops();
