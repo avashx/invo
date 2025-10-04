@@ -1,18 +1,17 @@
 {
-  "name": "dtc-bus-tracker",
+  "name": "live-invoice-proxy",
   "version": "1.0.0",
-  "description": "Delhi Transport Corporation real-time bus tracking and ticket generation system",
-  "main": "server.js",
+  "description": "Proxy server for live invoice bus data",
+  "main": "proxy-server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node proxy-server.js",
+    "dev": "nodemon proxy-server.js"
   },
   "dependencies": {
     "axios": "^1.12.2",
     "cors": "^2.8.5",
     "csv-parse": "^6.1.0",
     "dotenv": "^17.2.2",
-    "ejs": "^3.1.9",
     "express": "^4.21.2",
     "mongodb": "^6.20.0",
     "node-fetch": "^2.7.0",
@@ -24,14 +23,11 @@
   },
   "keywords": [
     "bus",
-    "tracker",
-    "dtc",
-    "delhi",
-    "real-time",
-    "ticket",
-    "gtfs"
+    "api",
+    "proxy",
+    "cors"
   ],
-  "author": "DTC Development Team",
+  "author": "Your Name",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -41,8 +37,5 @@
   "bugs": {
     "url": "https://github.com/avashx/invo/issues"
   },
-  "homepage": "https://github.com/avashx/invo#readme",
-  "engines": {
-    "node": ">=14.0.0"
-  }
+  "homepage": "https://github.com/avashx/invo#readme"
 }

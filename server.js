@@ -53,6 +53,10 @@ app.options('*', cors(corsOptions));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+// Set up EJS as view engine
+app.set('view engine', 'ejs');
+app.set('views', __dirname);
+
 // Serve static files
 app.use(express.static('.', {
     setHeaders: (res, filePath) => {
@@ -347,7 +351,36 @@ function broadcastBusUpdate() {
 
 // API Routes
 app.get('/', (req, res) => {
-    res.redirect('/liveinvoice.html');
+    res.redirect('/live');
+});
+
+// Route for live.ejs - Live ticket booking with auto-location
+app.get('/live', async (req, res) => {
+    try {
+        res.render('live', {
+            buses: busData,
+            busStops: busStops,
+            totalBuses: busData.length,
+            totalStops: busStops.length
+        });
+    } catch (error) {
+        logger.error(`Error rendering live page: ${error.message}`);
+        res.status(500).send('Error loading page');
+    }
+});
+
+// Route for bapp.ejs - Bus tracking map
+app.get('/track', async (req, res) => {
+    try {
+        res.render('bapp', {
+            buses: busData,
+            busStops: busStops,
+            totalBuses: busData.length
+        });
+    } catch (error) {
+        logger.error(`Error rendering track page: ${error.message}`);
+        res.status(500).send('Error loading page');
+    }
 });
 
 app.get('/api/buses', async (req, res) => {
