@@ -34,6 +34,7 @@ const corsOptions = {
     origin: [
         'https://bus-19wu.onrender.com',
         'https://dtconnect-app.onrender.com',
+        'https://dtcpelocal.vercel.app',
         'http://localhost:3000',
         'http://localhost:3001',
         'http://localhost:8000',
@@ -409,6 +410,12 @@ app.get('/track', async (req, res) => {
 
 app.get('/api/buses', async (req, res) => {
     try {
+        // If busData is empty (cold start), fetch it now
+        if (!busData || busData.length === 0) {
+            logger.info('Bus data empty on /api/buses, fetching now...');
+            await fetchBusData();
+        }
+        
         const responseData = {
             success: true,
             buses: busData,
@@ -494,6 +501,22 @@ app.get('/api/nearest-buses/:lat/:lng', async (req, res) => {
                 success: false,
                 error: 'Invalid coordinates'
             });
+        }
+        
+        // If busData is empty (cold start), fetch it now
+        if (!busData || busData.length === 0) {
+            logger.info('Bus data empty, fetching now...');
+            await fetchBusData();
+            
+            // If still empty after fetch, return empty result
+            if (!busData || busData.length === 0) {
+                return res.json({
+                    success: true,
+                    buses: [],
+                    message: 'No bus data available at the moment',
+                    userLocation: { latitude: userLat, longitude: userLng }
+                });
+            }
         }
         
         const nearestBuses = busData

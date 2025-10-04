@@ -926,9 +926,8 @@
         let refreshSeconds = 30;
 
         // API Configuration
-        const API_BASE = window.location.hostname === 'localhost' 
-            ? 'http://localhost:3001' 
-            : 'https://bus-19wu.onrender.com';
+        // Use relative URLs so it works on any domain (Vercel, localhost, etc.)
+        const API_BASE = '';
 
         // Distance calculation (Haversine formula)
         function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -1152,11 +1151,15 @@
                 }
             } catch (error) {
                 console.error('Error fetching nearest buses:', error);
-                updateStatus('Error loading buses');
+                const errorMsg = error.message || 'Unknown error';
+                updateStatus(`Error loading buses: ${errorMsg}`);
                 document.getElementById('buses-list').innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">⚠️</div>
-                        <div class="empty-state-text">Failed to load buses. Please refresh.</div>
+                        <div class="empty-state-text">
+                            Failed to load buses. Please refresh.<br>
+                            <small style="color: #8e8e93; font-size: 11px;">${errorMsg}</small>
+                        </div>
                     </div>
                 `;
                 document.getElementById('radar-buses').innerHTML = '';
