@@ -55,10 +55,20 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Set up EJS as view engine
 app.set('view engine', 'ejs');
-app.set('views', __dirname);
+// Set views directory - works for both local and Vercel
+app.set('views', path.join(__dirname, '/'));
+
+// Middleware to prevent direct access to .ejs files
+app.use((req, res, next) => {
+    if (req.path.endsWith('.ejs')) {
+        return res.status(404).send('Not Found');
+    }
+    next();
+});
 
 // Serve static files
 app.use(express.static('.', {
+    extensions: ['html'],
     setHeaders: (res, filePath) => {
         if (filePath.endsWith('.html')) {
             res.setHeader('Cache-Control', 'no-cache');
@@ -357,6 +367,8 @@ app.get('/', (req, res) => {
 // Route for live.ejs - Live ticket booking with auto-location
 app.get('/live', async (req, res) => {
     try {
+        // Set proper content type
+        res.set('Content-Type', 'text/html');
         res.render('live', {
             buses: busData,
             busStops: busStops,
@@ -365,7 +377,19 @@ app.get('/live', async (req, res) => {
         });
     } catch (error) {
         logger.error(`Error rendering live page: ${error.message}`);
-        res.status(500).send('Error loading page');
+        // Fallback: Try to serve the file directly
+        try {
+            const filePath = path.join(__dirname, 'live.ejs');
+            if (fs.existsSync(filePath)) {
+                const content = fs.readFileSync(filePath, 'utf8');
+                res.set('Content-Type', 'text/html');
+                res.send(content);
+            } else {
+                res.status(500).send('Error loading page: File not found');
+            }
+        } catch (fallbackError) {
+            res.status(500).send('Error loading page');
+        }
     }
 });
 
