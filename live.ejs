@@ -55,7 +55,7 @@
 
         .nav-title {
             font-size: 22px;
-            font-weight: 400;
+            font-weight: 700;
             color: #1c1c1e;
             letter-spacing: 1px;
             font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
@@ -96,7 +96,7 @@
         }
 
         .radar-title {
-            font-size: 26px;
+            font-size: 20px;
             font-weight: 400;
             color: #1c1c1e;
             margin: 0 0 8px 0;
@@ -239,28 +239,61 @@
 
         .location-info-box {
             background: #f8f9fa;
-            padding: 16px;
+            padding: 12px;
             border-radius: 12px;
-            text-align: center;
             border: 1px solid #e5e5ea;
         }
 
         .location-title-small {
-            font-size: 13px;
+            font-size: 12px;
             color: #8e8e93;
             margin-bottom: 8px;
+            text-align: center;
         }
 
         .location-name {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: #1c1c1e;
-            margin-bottom: 4px;
+            margin-bottom: 10px;
+            text-align: center;
         }
 
         .location-coords {
-            font-size: 12px;
+            font-size: 11px;
             color: #8e8e93;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .location-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .location-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #e5e5ea;
+        }
+
+        .location-stat:last-child {
+            border-bottom: none;
+        }
+
+        .location-stat-label {
+            font-size: 11px;
+            color: #8e8e93;
+            font-weight: 500;
+        }
+
+        .location-stat-value {
+            font-size: 12px;
+            color: #1c1c1e;
+            font-weight: 600;
         }
 
         .refresh-btn {
@@ -297,19 +330,48 @@
             border-bottom: 1px solid #f2f2f7;
         }
 
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+            user-select: none;
+        }
+
         .section-title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 400;
             color: #1c1c1e;
-            margin-bottom: 16px;
             letter-spacing: -0.3px;
+        }
+
+        .expand-icon {
+            font-size: 20px;
+            color: #8e8e93;
+            transition: transform 0.3s ease;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .stops-list {
+            max-height: 200px;
+            overflow-y: auto;
+            transition: max-height 0.3s ease;
+        }
+
+        .stops-list.collapsed {
+            max-height: 0;
+            overflow: hidden;
         }
 
         .stop-item {
             background: #f8f9fa;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 8px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
             border: 1px solid #e5e5ea;
             transition: all 0.2s ease;
             cursor: pointer;
@@ -334,14 +396,14 @@
         }
 
         .stop-name {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 600;
             color: #1c1c1e;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .stop-distance {
-            font-size: 13px;
+            font-size: 11px;
             color: #8e8e93;
         }
 
@@ -352,17 +414,29 @@
             border-bottom: 1px solid #f2f2f7;
         }
 
+        .bus-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            transition: max-height 0.3s ease;
+        }
+
+        .bus-list.collapsed {
+            max-height: 0;
+            overflow: hidden;
+        }
+
         .bus-item {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
+            flex-direction: column;
+            padding: 10px;
             background: #f8f9fa;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease;
             border: 1px solid #e5e5ea;
-            margin-bottom: 8px;
         }
 
         .bus-item:hover {
@@ -387,22 +461,29 @@
         .bus-info-left {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
+            margin-bottom: 4px;
         }
 
         .bus-number {
-            font-size: 16px;
+            font-size: 13px;
             font-weight: 600;
             color: #1c1c1e;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .bus-route {
-            font-size: 14px;
+            font-size: 11px;
             color: #8e8e93;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .bus-distance {
-            font-size: 14px;
+            font-size: 11px;
             font-weight: 500;
             color: #8e8e93;
         }
@@ -672,7 +753,7 @@
     <div class="app-container">
         <!-- Top Navigation -->
         <div class="top-nav">
-            <div class="nav-title">LIVE BOOKING</div>
+            <div class="nav-title">CONNECT</div>
             <div class="status-indicator-top">
                 <div class="live-dot" id="live-indicator"></div>
                 <span id="status-text">Loading...</span>
@@ -717,6 +798,16 @@
                 <div class="location-title-small">YOUR LOCATION</div>
                 <div class="location-name" id="location-name">Detecting...</div>
                 <div class="location-coords" id="location-coords">—</div>
+                <div class="location-stats">
+                    <div class="location-stat">
+                        <span class="location-stat-label">Nearest Bus</span>
+                        <span class="location-stat-value" id="nearest-bus-info">—</span>
+                    </div>
+                    <div class="location-stat">
+                        <span class="location-stat-label">Est. Arrival</span>
+                        <span class="location-stat-value" id="nearest-bus-eta">—</span>
+                    </div>
+                </div>
                 <button class="refresh-btn" id="refresh-location" onclick="getUserLocation()">
                     Refresh Location
                 </button>
@@ -725,8 +816,11 @@
 
         <!-- Nearest Stops -->
         <div class="stops-section">
-            <h3 class="section-title">Nearest Bus Stops</h3>
-            <div id="stops-list">
+            <div class="section-header" onclick="toggleSection('stops')">
+                <h3 class="section-title">Nearest Bus Stops (5)</h3>
+                <span class="expand-icon" id="stops-icon">▼</span>
+            </div>
+            <div id="stops-list" class="stops-list collapsed">
                 <div class="empty-state">
                     <div class="empty-state-icon">�</div>
                     <div class="empty-state-text">Finding nearest stops...</div>
@@ -736,8 +830,11 @@
 
         <!-- Bus List -->
         <div class="bus-list-section">
-            <h3 class="section-title">All Nearby Buses</h3>
-            <div id="buses-list">
+            <div class="section-header" onclick="toggleSection('buses')">
+                <h3 class="section-title">All Nearby Buses (10)</h3>
+                <span class="expand-icon" id="buses-icon">▼</span>
+            </div>
+            <div id="buses-list" class="bus-list collapsed">
                 <div class="empty-state">
                     <div class="empty-state-icon">�</div>
                     <div class="empty-state-text">Finding nearest buses...</div>
@@ -874,6 +971,52 @@
             } else {
                 locationNameEl.textContent = 'Detecting...';
                 locationCoordsEl.textContent = '—';
+            }
+        }
+
+        // Toggle section expand/collapse
+        function toggleSection(section) {
+            const listId = section === 'stops' ? 'stops-list' : 'buses-list';
+            const iconId = section === 'stops' ? 'stops-icon' : 'buses-icon';
+            
+            const list = document.getElementById(listId);
+            const icon = document.getElementById(iconId);
+            
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                icon.classList.add('expanded');
+            } else {
+                list.classList.add('collapsed');
+                icon.classList.remove('expanded');
+            }
+        }
+
+        // Update nearest bus info in location box
+        function updateNearestBusInfo() {
+            const nearestBusInfo = document.getElementById('nearest-bus-info');
+            const nearestBusEta = document.getElementById('nearest-bus-eta');
+            
+            if (nearestBuses.length > 0) {
+                const nearestBus = nearestBuses[0];
+                const routeDisplay = nearestBus.routeName || `Route ${nearestBus.routeNo}`;
+                nearestBusInfo.textContent = `${nearestBus.busNo} (${routeDisplay})`;
+                
+                // Estimate arrival time based on distance and average bus speed (20 km/h in city)
+                const avgSpeedKmh = 20;
+                const timeInMinutes = Math.round((nearestBus.distance / avgSpeedKmh) * 60);
+                
+                if (timeInMinutes < 1) {
+                    nearestBusEta.textContent = 'Arriving now';
+                } else if (timeInMinutes < 60) {
+                    nearestBusEta.textContent = `~${timeInMinutes} min`;
+                } else {
+                    const hours = Math.floor(timeInMinutes / 60);
+                    const mins = timeInMinutes % 60;
+                    nearestBusEta.textContent = `~${hours}h ${mins}m`;
+                }
+            } else {
+                nearestBusInfo.textContent = '—';
+                nearestBusEta.textContent = '—';
             }
         }
 
@@ -1034,7 +1177,18 @@
                 return;
             }
 
-            stopsList.innerHTML = nearestStops.map((stop, index) => `
+            // Deduplicate stops with same name - keep only the closest one
+            const uniqueStops = [];
+            const seenNames = new Set();
+            
+            for (const stop of nearestStops) {
+                if (!seenNames.has(stop.name)) {
+                    uniqueStops.push(stop);
+                    seenNames.add(stop.name);
+                }
+            }
+
+            stopsList.innerHTML = uniqueStops.map((stop, index) => `
                 <div class="stop-item ${selectedStop && selectedStop.name === stop.name ? 'selected' : ''}" 
                      onclick="selectStop(${JSON.stringify(stop).replace(/"/g, '&quot;')})">
                     <div class="stop-name">${stop.name}</div>
@@ -1066,11 +1220,14 @@
                      onclick="selectBus(${JSON.stringify(bus).replace(/"/g, '&quot;')})">
                     <div class="bus-info-left">
                         <div class="bus-number">#${index + 1} ${bus.busNo}</div>
-                        <div class="bus-route">${bus.routeName || bus.routeNo}</div>
+                        <div class="bus-route">${bus.routeName || 'Route ' + bus.routeNo}</div>
+                        <div class="bus-distance">${formatDistance(bus.distance)}</div>
                     </div>
-                    <div class="bus-distance">${formatDistance(bus.distance)}</div>
                 </div>
             `).join('');
+
+            // Update nearest bus info in location box
+            updateNearestBusInfo();
         }
 
         // Display buses on radar (10 buses max)
@@ -1107,7 +1264,7 @@
                     <div class="radar-bus ${isSelected ? 'selected' : ''}" 
                          style="left: ${x}px; top: ${y}px;"
                          onclick='selectBusFromRadar(${JSON.stringify(bus).replace(/"/g, "&quot;")})'>
-                        <div class="bus-number-radar">${bus.routeNo}</div>
+                        <div class="bus-number-radar">${bus.routeName || bus.routeNo}</div>
                         <div class="bus-distance-radar">${formatDistance(bus.distance)}</div>
                     </div>
                 `;
@@ -1125,7 +1282,9 @@
         // Select a bus
         function selectBus(bus) {
             selectedBus = bus;
-            document.getElementById('route-number').value = `${bus.routeNo} (${bus.routeName})`;
+            // Use route name if available, otherwise fall back to route number
+            const routeDisplay = bus.routeName || `Route ${bus.routeNo}`;
+            document.getElementById('route-number').value = routeDisplay;
             document.getElementById('bus-registration').value = bus.busNo;
             displayNearestBuses();
             displayNearestStops();
@@ -1201,7 +1360,7 @@
 
             const fromLocation = document.getElementById('from-location').value;
             const toLocation = document.getElementById('to-location').value;
-            const routeNumber = document.getElementById('route-number').value.split(' (')[0]; // Get just the route number
+            const routeNumber = document.getElementById('route-number').value; // Use the full route name
             const busRegistration = document.getElementById('bus-registration').value;
 
             // Redirect to invoice.html with query parameters
