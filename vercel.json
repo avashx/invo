@@ -28,6 +28,18 @@
       "dest": "/server.js"
     },
     {
+      "src": "/asset/dtcImage.png",
+      "dest": "/asset/dtcImage.png"
+    },
+    {
+      "src": "/asset/main.d65b6151.css",
+      "dest": "/asset/main.d65b6151.css"
+    },
+    {
+      "src": "/asset/main.441f1ef8.js",
+      "dest": "/asset/main.441f1ef8.js"
+    },
+    {
       "src": "/asset/(.*)",
       "dest": "/asset/$1"
     },

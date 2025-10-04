@@ -1,10 +1,13 @@
 # Don't ignore these files
-!*.html
+
+!*.ejs
 !*.csv
 !*.proto
 !*.otf
+!asset/**
 
 # Ignore these
+
 node_modules
 .env
 .git
