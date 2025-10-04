@@ -8,6 +8,18 @@
   ],
   "routes": [
     {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/index.html",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/invoice.html",
+      "dest": "/invoice.html"
+    },
+    {
       "src": "/live",
       "dest": "/server.js"
     },

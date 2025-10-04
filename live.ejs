@@ -788,7 +788,7 @@
             </div>
 
             <div style="text-align: center; color: #8e8e93; font-size: 13px; margin-top: 10px;">
-                <span id="bus-count">0</span> buses found · Updates every 30s
+                <span id="bus-count">0</span> buses found · Updates every 15s
             </div>
         </div>
 
@@ -845,10 +845,6 @@
         <!-- Ticket Form -->
         <div class="ticket-form">
             <h3 class="section-title">Generate Ticket</h3>
-            
-            <div class="info-message">
-                Select a bus from the radar or list above to auto-fill the form. Only enter your destination!
-            </div>
 
             <form id="ticket-form" onsubmit="generateTicket(event)">
                 <div class="form-group">
@@ -923,7 +919,7 @@
         let selectedStop = null;
         let refreshInterval;
         let countdownInterval;
-        let refreshSeconds = 30;
+        let refreshSeconds = 15;
 
         // API Configuration
         // Use relative URLs so it works on any domain (Vercel, localhost, etc.)
@@ -1149,7 +1145,7 @@
                     updateStatus(`${nearestBuses.length} buses found · Connected`);
                     
                     // Reset refresh timer
-                    refreshSeconds = 30;
+                    refreshSeconds = 15;
                 }
             } catch (error) {
                 console.error('Error fetching nearest buses:', error);
@@ -1262,8 +1258,9 @@
                 const normalizedDistance = bus.distance / maxDistance;
                 const distanceFromCenter = Math.min(normalizedDistance * radarRadius, radarRadius);
                 
-                // Random angle for visual distribution
-                const angle = (index * 36 + Math.random() * 30) * (Math.PI / 180);
+                // Fixed angle distribution (no random) - evenly space buses around the radar
+                // Each bus gets a fixed position based on its index
+                const angle = (index * 36) * (Math.PI / 180); // 36 degrees apart (360/10 = 36)
                 
                 // Calculate x, y coordinates
                 const x = 160 + (distanceFromCenter * Math.cos(angle));
@@ -1388,13 +1385,13 @@
 
         // Auto-refresh functionality
         function startAutoRefresh() {
-            // Refresh data every 30 seconds
+            // Refresh data every 15 seconds
             refreshInterval = setInterval(() => {
                 if (userLocation) {
                     fetchNearestBuses();
-                    refreshSeconds = 30;
+                    refreshSeconds = 15;
                 }
-            }, 30000);
+            }, 15000);
 
             // Update countdown timer
             countdownInterval = setInterval(() => {
@@ -1402,7 +1399,7 @@
                 document.getElementById('refresh-timer').textContent = refreshSeconds;
                 
                 if (refreshSeconds <= 0) {
-                    refreshSeconds = 30;
+                    refreshSeconds = 15;
                 }
             }, 1000);
         }

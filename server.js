@@ -362,7 +362,7 @@ function broadcastBusUpdate() {
 
 // API Routes
 app.get('/', (req, res) => {
-    res.redirect('/live');
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Route for live.ejs - Live ticket booking with auto-location
