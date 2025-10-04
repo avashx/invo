@@ -67,7 +67,22 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve static files
+// Serve static files from DTC-Ticket Booking_files directory explicitly
+app.use('/DTC-Ticket Booking_files', express.static(path.join(__dirname, 'DTC-Ticket Booking_files'), {
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.css')) {
+            res.setHeader('Content-Type', 'text/css');
+        }
+        if (filePath.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+        if (filePath.endsWith('.png')) {
+            res.setHeader('Content-Type', 'image/png');
+        }
+    }
+}));
+
+// Serve static files from root directory
 app.use(express.static('.', {
     extensions: ['html'],
     setHeaders: (res, filePath) => {
@@ -77,6 +92,9 @@ app.use(express.static('.', {
         if (filePath.endsWith('.csv')) {
             res.setHeader('Content-Type', 'text/csv');
             res.setHeader('Access-Control-Allow-Origin', '*');
+        }
+        if (filePath.endsWith('.otf')) {
+            res.setHeader('Content-Type', 'font/otf');
         }
     }
 }));

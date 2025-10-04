@@ -8,13 +8,13 @@
     <style>
         @font-face {
             font-family: 'alo';
-            src: url('alo.otf') format('opentype');
+            src: url('/alo.otf') format('opentype');
             font-weight: normal;
             font-style: normal;
         }
 
         :root {
-            --backg: url("blank-ticket.JPG"); /*Background */
+            --backg: url("/blank-ticket.JPG"); /*Background */
             --disp: hidden;
             --reld: absolute;
             --color-black: #000000;
@@ -269,7 +269,7 @@
             position: relative;
             width: 398px;
             height: 553px;
-            background-image: url('blank-ticket.JPG');
+            background-image: url('/blank-ticket.JPG');
             background-size: 100% 100%;
             background-repeat: no-repeat;
             background-position: center;
@@ -700,7 +700,7 @@
 <body>
     <!-- App Header -->
     <div class="app-header">
-        <img src="./DTC-Ticket Booking_files/dtcImage.png" class="app-logo" alt="DTC Logo">
+        <img src="/DTC-Ticket Booking_files/dtcImage.png" class="app-logo" alt="DTC Logo">
         <h1 class="app-title">DTC Ticket Generator</h1>
     </div>
     
@@ -758,10 +758,10 @@
         <div class="section-divider"></div>
 
         <div class="InputGroup"> 
-            <input type="radio" checked="checked" id="bg-1" value="url('blank-ticket.JPG')" name="backg" >
+            <input type="radio" checked="checked" id="bg-1" value="url('/blank-ticket.JPG')" name="backg" >
             <label for="bg-1">Ticket</label>
 
-            <input type="radio" id="bg-2" value="url('blnk.jpg')" name="backg" > 
+            <input type="radio" id="bg-2" value="url('/blnk.jpg')" name="backg" > 
             <label for="bg-2">Blank</label>  
         </div>
         
