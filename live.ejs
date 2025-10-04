@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTC Live Ticket Booking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Antic+Didone&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'alo';
+            src: url('./alo.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 0;
+            color: #1c1c1e;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 420px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            border-bottom: 1px solid #e5e5ea;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1c1c1e;
+            letter-spacing: 1px;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .status-indicator-top {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #8e8e93;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #34c759;
+            border-radius: 50%;
+            animation: pulse-loading 1.5s infinite;
+        }
+
+        @keyframes pulse-loading {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        /* Radar Section */
+        .radar-section {
+            background: white;
+            padding: 30px 20px;
+            margin: 0;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .radar-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .radar-title {
+            font-size: 20px;
+            font-weight: 400;
+            color: #1c1c1e;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+        }
+
+        .radar-subtitle {
+            font-size: 15px;
+            color: #8e8e93;
+            margin: 0;
+            font-weight: 400;
+        }
+
+        .radar-display {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 0 auto 30px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            border: 2px solid #e5e5ea;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .radar-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: #1c1c1e;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 0 0 2px rgba(28, 28, 30, 0.2);
+        }
+
+        .radar-rings .ring {
+            position: absolute;
+            border: 1px solid #e5e5ea;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ring-1 { width: 64px; height: 64px; }
+        .ring-2 { width: 128px; height: 128px; }
+        .ring-3 { width: 192px; height: 192px; }
+        .ring-4 { width: 256px; height: 256px; }
+        .ring-5 { width: 320px; height: 320px; }
+
+        .radar-sweep {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 160px;
+            height: 2px;
+            background: linear-gradient(to right, rgba(28, 28, 30, 0.8), transparent);
+            transform-origin: left center;
+            transform: translate(0, -50%) rotate(0deg);
+            animation: sweep-smooth 4s linear infinite;
+        }
+
+        @keyframes sweep-smooth {
+            0% { transform: translate(0, -50%) rotate(0deg); }
+            100% { transform: translate(0, -50%) rotate(360deg); }
+        }
+
+        .distance-label {
+            position: absolute;
+            color: #8e8e93;
+            font-size: 10px;
+            font-weight: 500;
+            pointer-events: none;
+            background: white;
+            padding: 2px 6px;
+            border-radius: 6px;
+            border: 1px solid #e5e5ea;
+        }
+
+        .label-1 { top: 140px; right: 15px; }
+        .label-2 { top: 90px; right: 15px; }
+        .label-3 { top: 40px; right: 15px; }
+
+        .radar-bus {
+            background: #1c1c1e;
+            color: white;
+            border: 2px solid #1c1c1e;
+            padding: 4px 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 9px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translate(-50%, -50%);
+            letter-spacing: 0.3px;
+            min-width: 45px;
+            text-align: center;
+            line-height: 1.2;
+            box-shadow: 0 2px 6px rgba(28, 28, 30, 0.2);
+        }
+
+        .radar-bus .bus-number-radar {
+            font-weight: 700;
+            font-size: 10px;
+        }
+
+        .radar-bus .bus-distance-radar {
+            font-size: 7px;
+            opacity: 0.7;
+        }
+
+        .radar-bus:hover {
+            background: #007aff;
+            border-color: #007aff;
+            transform: translate(-50%, -50%) scale(1.15);
+            z-index: 15;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.4);
+        }
+
+        .radar-bus.selected {
+            background: #007aff;
+            border-color: #007aff;
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+            transform: translate(-50%, -50%) scale(1.15);
+            z-index: 15;
+        }
+
+        /* Location Info */
+        .location-section {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .location-info-box {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #e5e5ea;
+        }
+
+        .location-title-small {
+            font-size: 12px;
+            color: #8e8e93;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .location-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c1c1e;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .location-coords {
+            font-size: 11px;
+            color: #8e8e93;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .location-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .location-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #e5e5ea;
+        }
+
+        .location-stat:last-child {
+            border-bottom: none;
+        }
+
+        .location-stat-label {
+            font-size: 11px;
+            color: #8e8e93;
+            font-weight: 500;
+        }
+
+        .location-stat-value {
+            font-size: 12px;
+            color: #1c1c1e;
+            font-weight: 600;
+        }
+
+        .refresh-btn {
+            background: #1c1c1e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 12px;
+        }
+
+        .refresh-btn:hover {
+            background: #007aff;
+            transform: translateY(-1px);
+        }
+
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Stops Section */
+        .stops-section {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 400;
+            color: #1c1c1e;
+            letter-spacing: -0.3px;
+        }
+
+        .expand-icon {
+            font-size: 20px;
+            color: #8e8e93;
+            transition: transform 0.3s ease;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .stops-list {
+            max-height: 200px;
+            overflow-y: auto;
+            transition: max-height 0.3s ease;
+        }
+
+        .stops-list.collapsed {
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .stop-item {
+            background: #f8f9fa;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            border: 1px solid #e5e5ea;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .stop-item:hover {
+            background: #e5e5ea;
+        }
+
+        .stop-item.selected {
+            background: #1c1c1e;
+            border-color: #1c1c1e;
+            color: white;
+        }
+
+        .stop-item.selected .stop-name {
+            color: white;
+        }
+
+        .stop-item.selected .stop-distance {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .stop-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c1c1e;
+            margin-bottom: 2px;
+        }
+
+        .stop-distance {
+            font-size: 11px;
+            color: #8e8e93;
+        }
+
+        /* Bus List Section */
+        .bus-list-section {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .bus-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            transition: max-height 0.3s ease;
+        }
+
+        .bus-list.collapsed {
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .bus-item {
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid #e5e5ea;
+        }
+
+        .bus-item:hover {
+            background: #e5e5ea;
+        }
+
+        .bus-item.selected {
+            background: #007aff;
+            color: white;
+            border-color: #007aff;
+        }
+
+        .bus-item.selected .bus-number,
+        .bus-item.selected .bus-route {
+            color: white;
+        }
+
+        .bus-item.selected .bus-distance {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .bus-info-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-bottom: 4px;
+        }
+
+        .bus-number {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c1c1e;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bus-route {
+            font-size: 11px;
+            color: #8e8e93;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bus-distance {
+            font-size: 11px;
+            font-weight: 500;
+            color: #8e8e93;
+        }
+
+        /* Ticket Form */
+        .ticket-form {
+            background: white;
+            padding: 20px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #8e8e93;
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            transition: all 0.2s ease;
+            background: white;
+            color: #1c1c1e;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1c1c1e;
+            box-shadow: 0 0 0 2px rgba(28, 28, 30, 0.1);
+        }
+
+        .form-input:disabled {
+            background: #f8f9fa;
+            color: #8e8e93;
+            cursor: not-allowed;
+        }
+
+        .form-input::placeholder {
+            color: #8e8e93;
+        }
+
+        .autocomplete-results {
+            position: absolute;
+            width: calc(100% - 40px);
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #e5e5ea;
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+            margin-top: -12px;
+        }
+
+        .autocomplete-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-size: 14px;
+            border-bottom: 1px solid #f2f2f7;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        .autocomplete-item:hover {
+            background: #f8f9fa;
+        }
+
+        /* Generate Button */
+        .generate-btn {
+            width: 100%;
+            padding: 16px;
+            background: #1c1c1e;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 16px;
+        }
+
+        .generate-btn:hover {
+            background: #007aff;
+            transform: translateY(-1px);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(28, 28, 30, 0.3);
+            border-radius: 50%;
+            border-top-color: #1c1c1e;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #8e8e93;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Status Bar Bottom */
+        .status-bar-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #1c1c1e;
+            background: white;
+            padding: 12px 20px;
+            border-top: 1px solid #f2f2f7;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 420px;
+            margin: 0 auto;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background: #34c759;
+        }
+
+        .info-message {
+            background: #f8f9fa;
+            border-left: 3px solid #1c1c1e;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #1c1c1e;
+            line-height: 1.6;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .status-bar {
+                gap: 8px;
+            }
+
+            .status-item {
+                padding: 10px 8px;
+            }
+
+            .status-label {
+                font-size: 10px;
+            }
+
+            .status-value {
+                font-size: 12px;
+            }
+        }
+
+        /* Scroll customization */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+
+        /* Selection highlight */
+        ::selection {
+            background: rgba(102, 126, 234, 0.3);
+        }
+
+        /* Info Message */
+        .info-message {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1) 0%, rgba(0, 242, 254, 0.1) 100%);
+            border-left: 4px solid #4facfe;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: var(--text-medium);
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Input focus effect for mobile */
+        @media (max-width: 768px) {
+            .form-input[type="text"],
+            .form-input[type="number"] {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation -->
+        <div class="top-nav">
+            <div class="nav-title">CONNECT</div>
+            <div class="status-indicator-top">
+                <div class="live-dot" id="live-indicator"></div>
+                <span id="status-text">Loading...</span>
+            </div>
+        </div>
+
+        <!-- Radar Section -->
+        <div class="radar-section">
+            <div class="radar-header">
+                <h2 class="radar-title">Nearest Buses</h2>
+                <p class="radar-subtitle">Tap any bus to select</p>
+            </div>
+            
+            <div class="radar-display">
+                <div class="radar-rings">
+                    <div class="ring ring-1"></div>
+                    <div class="ring ring-2"></div>
+                    <div class="ring ring-3"></div>
+                    <div class="ring ring-4"></div>
+                    <div class="ring ring-5"></div>
+                </div>
+                
+                <div class="distance-label label-1">500m</div>
+                <div class="distance-label label-2">1km</div>
+                <div class="distance-label label-3">2km</div>
+                
+                <div class="radar-sweep"></div>
+                <div class="radar-center"></div>
+                
+                <!-- Buses will be dynamically added here -->
+                <div id="radar-buses"></div>
+            </div>
+
+            <div style="text-align: center; color: #8e8e93; font-size: 13px; margin-top: 10px;">
+                <span id="bus-count">0</span> buses found · Updates every 15s
+            </div>
+        </div>
+
+        <!-- Location Info -->
+        <div class="location-section">
+            <div class="location-info-box">
+                <div class="location-title-small">YOUR LOCATION</div>
+                <div class="location-name" id="location-name">Detecting...</div>
+                <div class="location-coords" id="location-coords">—</div>
+                <div class="location-stats">
+                    <div class="location-stat">
+                        <span class="location-stat-label">Nearest Bus</span>
+                        <span class="location-stat-value" id="nearest-bus-info">—</span>
+                    </div>
+                    <div class="location-stat">
+                        <span class="location-stat-label">Est. Arrival</span>
+                        <span class="location-stat-value" id="nearest-bus-eta">—</span>
+                    </div>
+                </div>
+                <button class="refresh-btn" id="refresh-location" onclick="getUserLocation()">
+                    Refresh Location
+                </button>
+            </div>
+        </div>
+
+        <!-- Nearest Stops -->
+        <div class="stops-section">
+            <div class="section-header" onclick="toggleSection('stops')">
+                <h3 class="section-title">Nearest Bus Stops (5)</h3>
+                <span class="expand-icon" id="stops-icon">▼</span>
+            </div>
+            <div id="stops-list" class="stops-list collapsed">
+                <div class="empty-state">
+                    <div class="empty-state-icon">�</div>
+                    <div class="empty-state-text">Finding nearest stops...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bus List -->
+        <div class="bus-list-section">
+            <div class="section-header" onclick="toggleSection('buses')">
+                <h3 class="section-title">All Nearby Buses (10)</h3>
+                <span class="expand-icon" id="buses-icon">▼</span>
+            </div>
+            <div id="buses-list" class="bus-list collapsed">
+                <div class="empty-state">
+                    <div class="empty-state-icon">�</div>
+                    <div class="empty-state-text">Finding nearest buses...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Form -->
+        <div class="ticket-form">
+            <h3 class="section-title">Generate Ticket</h3>
+
+            <form id="ticket-form" onsubmit="generateTicket(event)">
+                <div class="form-group">
+                    <label class="form-label" for="from-location">From (Source Stop)</label>
+                    <input 
+                        type="text" 
+                        id="from-location" 
+                        class="form-input" 
+                        placeholder="Auto-filled from nearest stop"
+                        disabled
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="to-location">To (Destination)</label>
+                    <input 
+                        type="text" 
+                        id="to-location" 
+                        class="form-input" 
+                        placeholder="Enter your destination"
+                        autocomplete="off"
+                        required
+                    >
+                    <div class="autocomplete-results" id="autocomplete-results"></div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="route-number">Route Number</label>
+                    <input 
+                        type="text" 
+                        id="route-number" 
+                        class="form-input" 
+                        placeholder="Auto-filled from selected bus"
+                        disabled
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="bus-registration">Bus Registration Number</label>
+                    <input 
+                        type="text" 
+                        id="bus-registration" 
+                        class="form-input" 
+                        placeholder="Auto-filled from selected bus"
+                        disabled
+                        required
+                    >
+                </div>
+
+                <button type="submit" class="generate-btn" id="generate-btn" disabled>
+                    Generate Ticket
+                </button>
+            </form>
+        </div>
+
+        <!-- Status Bar Bottom -->
+        <div class="status-bar-bottom">
+            <span class="status-dot"></span>
+            <span id="update-status">Waiting for location...</span>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let userLocation = null;
+        let nearestStops = [];
+        let nearestBuses = [];
+        let allStops = [];
+        let selectedBus = null;
+        let selectedStop = null;
+        let refreshInterval;
+        let countdownInterval;
+        let refreshSeconds = 15;
+
+        // API Configuration
+        // Use relative URLs so it works on any domain (Vercel, localhost, etc.)
+        const API_BASE = '';
+
+        // Distance calculation (Haversine formula)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        // Format distance for display
+        function formatDistance(distance) {
+            if (distance < 1) {
+                return `${Math.round(distance * 1000)}m`;
+            }
+            return `${distance.toFixed(2)}km`;
+        }
+
+        // Update status
+        function updateStatus(text) {
+            document.getElementById('status-text').textContent = text;
+            document.getElementById('update-status').textContent = text;
+        }
+
+        // Update location display
+        function updateLocationDisplay(stopName = null) {
+            const locationNameEl = document.getElementById('location-name');
+            const locationCoordsEl = document.getElementById('location-coords');
+            
+            if (userLocation) {
+                if (stopName) {
+                    locationNameEl.textContent = stopName;
+                } else {
+                    locationNameEl.textContent = 'Location Detected';
+                }
+                locationCoordsEl.textContent = `${userLocation.latitude.toFixed(6)}, ${userLocation.longitude.toFixed(6)}`;
+            } else {
+                locationNameEl.textContent = 'Detecting...';
+                locationCoordsEl.textContent = '—';
+            }
+        }
+
+        // Toggle section expand/collapse
+        function toggleSection(section) {
+            const listId = section === 'stops' ? 'stops-list' : 'buses-list';
+            const iconId = section === 'stops' ? 'stops-icon' : 'buses-icon';
+            
+            const list = document.getElementById(listId);
+            const icon = document.getElementById(iconId);
+            
+            if (list.classList.contains('collapsed')) {
+                list.classList.remove('collapsed');
+                icon.classList.add('expanded');
+            } else {
+                list.classList.add('collapsed');
+                icon.classList.remove('expanded');
+            }
+        }
+
+        // Update nearest bus info in location box
+        function updateNearestBusInfo() {
+            const nearestBusInfo = document.getElementById('nearest-bus-info');
+            const nearestBusEta = document.getElementById('nearest-bus-eta');
+            
+            if (nearestBuses.length > 0) {
+                const nearestBus = nearestBuses[0];
+                const routeDisplay = nearestBus.routeName || `Route ${nearestBus.routeNo}`;
+                nearestBusInfo.textContent = `${nearestBus.busNo} (${routeDisplay})`;
+                
+                // Estimate arrival time based on distance and average bus speed (20 km/h in city)
+                const avgSpeedKmh = 20;
+                const timeInMinutes = Math.round((nearestBus.distance / avgSpeedKmh) * 60);
+                
+                if (timeInMinutes < 1) {
+                    nearestBusEta.textContent = 'Arriving now';
+                } else if (timeInMinutes < 60) {
+                    nearestBusEta.textContent = `~${timeInMinutes} min`;
+                } else {
+                    const hours = Math.floor(timeInMinutes / 60);
+                    const mins = timeInMinutes % 60;
+                    nearestBusEta.textContent = `~${hours}h ${mins}m`;
+                }
+            } else {
+                nearestBusInfo.textContent = '—';
+                nearestBusEta.textContent = '—';
+            }
+        }
+
+        // Get user's location
+        function getUserLocation() {
+            updateStatus('Requesting location...');
+            
+            if (!navigator.geolocation) {
+                updateStatus('Geolocation not supported');
+                return;
+            }
+
+            const refreshBtn = document.getElementById('refresh-location');
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<span class="loading-spinner"></span> Loading...';
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    userLocation = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy
+                    };
+
+                    updateStatus('Location acquired');
+                    updateLocationDisplay();
+                    console.log('Location acquired:', userLocation);
+
+                    // Fetch nearest stops and buses
+                    fetchNearestStops();
+                    fetchNearestBuses();
+
+                    refreshBtn.disabled = false;
+                    refreshBtn.textContent = 'Refresh Location';
+                },
+                (error) => {
+                    console.error('Geolocation error:', error);
+                    let errorMsg = 'Unable to get location';
+                    
+                    switch (error.code) {
+                        case error.PERMISSION_DENIED:
+                            errorMsg = 'Location permission denied';
+                            break;
+                        case error.POSITION_UNAVAILABLE:
+                            errorMsg = 'Location unavailable';
+                            break;
+                        case error.TIMEOUT:
+                            errorMsg = 'Location request timeout';
+                            break;
+                    }
+
+                    updateStatus(errorMsg);
+                    
+                    refreshBtn.disabled = false;
+                    refreshBtn.textContent = 'Retry';
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        }
+
+        // Fetch all stops for autocomplete
+        async function fetchAllStops() {
+            try {
+                const response = await fetch(`${API_BASE}/api/all-stops`);
+                const data = await response.json();
+                
+                if (data.success && data.stops) {
+                    allStops = data.stops;
+                    console.log(`Loaded ${allStops.length} stops for autocomplete`);
+                }
+            } catch (error) {
+                console.error('Error fetching all stops:', error);
+            }
+        }
+
+        // Fetch nearest stops
+        async function fetchNearestStops() {
+            if (!userLocation) return;
+
+            try {
+                // Fetch more stops (20) to account for deduplication
+                // After removing duplicates, we'll still have at least 5 unique stops
+                const response = await fetch(
+                    `${API_BASE}/api/nearest-stops/${userLocation.latitude}/${userLocation.longitude}?limit=20`
+                );
+                const data = await response.json();
+
+                if (data.success && data.stops) {
+                    nearestStops = data.stops;
+                    displayNearestStops();
+                    
+                    // Auto-select the nearest stop and update location display
+                    if (nearestStops.length > 0) {
+                        selectStop(nearestStops[0]);
+                        updateLocationDisplay(nearestStops[0].name);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching nearest stops:', error);
+                document.getElementById('stops-list').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <div class="empty-state-text">Failed to load stops. Please refresh.</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Fetch nearest buses
+        async function fetchNearestBuses() {
+            if (!userLocation) return;
+
+            updateStatus('Loading buses...');
+
+            try {
+                const response = await fetch(
+                    `${API_BASE}/api/nearest-buses/${userLocation.latitude}/${userLocation.longitude}?limit=10`
+                );
+                const data = await response.json();
+
+                if (data.success && data.buses) {
+                    nearestBuses = data.buses;
+                    displayNearestBuses();
+                    
+                    document.getElementById('bus-count').textContent = nearestBuses.length;
+                    
+                    updateStatus(`${nearestBuses.length} buses found · Connected`);
+                    
+                    // Reset refresh timer
+                    refreshSeconds = 15;
+                }
+            } catch (error) {
+                console.error('Error fetching nearest buses:', error);
+                const errorMsg = error.message || 'Unknown error';
+                updateStatus(`Error loading buses: ${errorMsg}`);
+                document.getElementById('buses-list').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <div class="empty-state-text">
+                            Failed to load buses. Please refresh.<br>
+                            <small style="color: #8e8e93; font-size: 11px;">${errorMsg}</small>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('radar-buses').innerHTML = '';
+            }
+        }
+
+        // Display nearest stops
+        function displayNearestStops() {
+            const stopsList = document.getElementById('stops-list');
+            
+            if (nearestStops.length === 0) {
+                stopsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🚏</div>
+                        <div class="empty-state-text">No stops found nearby</div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Deduplicate stops with same name - keep only the closest one
+            // Limit to 5 unique stops after deduplication
+            const uniqueStops = [];
+            const seenNames = new Set();
+            
+            for (const stop of nearestStops) {
+                if (!seenNames.has(stop.name)) {
+                    uniqueStops.push(stop);
+                    seenNames.add(stop.name);
+                    
+                    // Stop after we have 5 unique stops
+                    if (uniqueStops.length >= 5) {
+                        break;
+                    }
+                }
+            }
+
+            stopsList.innerHTML = uniqueStops.map((stop, index) => `
+                <div class="stop-item ${selectedStop && selectedStop.name === stop.name ? 'selected' : ''}" 
+                     onclick="selectStop(${JSON.stringify(stop).replace(/"/g, '&quot;')})">
+                    <div class="stop-name">${stop.name}</div>
+                    <div class="stop-distance">${formatDistance(stop.distance)} away</div>
+                </div>
+            `).join('');
+        }
+
+        // Display nearest buses on radar
+        function displayNearestBuses() {
+            // Update radar
+            displayBusesOnRadar();
+            
+            // Update list
+            const busesList = document.getElementById('buses-list');
+            
+            if (nearestBuses.length === 0) {
+                busesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🚍</div>
+                        <div class="empty-state-text">No buses found nearby</div>
+                    </div>
+                `;
+                return;
+            }
+
+            busesList.innerHTML = nearestBuses.map((bus, index) => `
+                <div class="bus-item ${selectedBus && selectedBus.busNo === bus.busNo ? 'selected' : ''}" 
+                     onclick="selectBus(${JSON.stringify(bus).replace(/"/g, '&quot;')})">
+                    <div class="bus-info-left">
+                        <div class="bus-number">#${index + 1} ${bus.busNo}</div>
+                        <div class="bus-route">${bus.routeName || 'Route ' + bus.routeNo}</div>
+                        <div class="bus-distance">${formatDistance(bus.distance)}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Update nearest bus info in location box
+            updateNearestBusInfo();
+        }
+
+        // Display buses on radar (10 buses max)
+        function displayBusesOnRadar() {
+            const radarBuses = document.getElementById('radar-buses');
+            const maxDistance = nearestBuses.length > 0 ? nearestBuses[Math.min(9, nearestBuses.length - 1)].distance : 2;
+            const radarRadius = 160; // Radius of radar in pixels
+            
+            if (nearestBuses.length === 0) {
+                radarBuses.innerHTML = '';
+                return;
+            }
+
+            // Display only top 10 buses
+            const top10Buses = nearestBuses.slice(0, 10);
+            
+            radarBuses.innerHTML = top10Buses.map((bus, index) => {
+                // Calculate position on radar
+                // Bus 1 (index 0) = innermost ring (closest)
+                // Bus 10 (index 9) = outermost ring (furthest)
+                const normalizedDistance = bus.distance / maxDistance;
+                const distanceFromCenter = Math.min(normalizedDistance * radarRadius, radarRadius);
+                
+                // Fixed angle distribution (no random) - evenly space buses around the radar
+                // Each bus gets a fixed position based on its index
+                const angle = (index * 36) * (Math.PI / 180); // 36 degrees apart (360/10 = 36)
+                
+                // Calculate x, y coordinates
+                const x = 160 + (distanceFromCenter * Math.cos(angle));
+                const y = 160 + (distanceFromCenter * Math.sin(angle));
+                
+                const isSelected = selectedBus && selectedBus.busNo === bus.busNo;
+                
+                return `
+                    <div class="radar-bus ${isSelected ? 'selected' : ''}" 
+                         style="left: ${x}px; top: ${y}px;"
+                         onclick='selectBusFromRadar(${JSON.stringify(bus).replace(/"/g, "&quot;")})'>
+                        <div class="bus-number-radar">${bus.routeName || bus.routeNo}</div>
+                        <div class="bus-distance-radar">${formatDistance(bus.distance)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Select a stop
+        function selectStop(stop) {
+            selectedStop = stop;
+            document.getElementById('from-location').value = stop.name;
+            displayNearestStops();
+            checkFormValidity();
+        }
+
+        // Select a bus
+        function selectBus(bus) {
+            selectedBus = bus;
+            // Use route name if available, otherwise fall back to route number
+            const routeDisplay = bus.routeName || `Route ${bus.routeNo}`;
+            document.getElementById('route-number').value = routeDisplay;
+            document.getElementById('bus-registration').value = bus.busNo;
+            displayNearestBuses();
+            displayNearestStops();
+            checkFormValidity();
+        }
+
+        // Select a bus from radar
+        function selectBusFromRadar(bus) {
+            selectBus(bus);
+        }
+
+        // Check if form is valid and enable/disable submit button
+        function checkFormValidity() {
+            const fromLocation = document.getElementById('from-location').value;
+            const toLocation = document.getElementById('to-location').value;
+            const routeNumber = document.getElementById('route-number').value;
+            const busRegistration = document.getElementById('bus-registration').value;
+            
+            const isValid = fromLocation && toLocation && routeNumber && busRegistration;
+            document.getElementById('generate-btn').disabled = !isValid;
+        }
+
+        // Autocomplete functionality for destination
+        function setupAutocomplete() {
+            const input = document.getElementById('to-location');
+            const resultsDiv = document.getElementById('autocomplete-results');
+
+            input.addEventListener('input', function() {
+                const value = this.value.toLowerCase().trim();
+                checkFormValidity();
+
+                if (value.length < 2) {
+                    resultsDiv.style.display = 'none';
+                    return;
+                }
+
+                const matches = allStops
+                    .filter(stop => stop.name.toLowerCase().includes(value))
+                    .slice(0, 5);
+
+                if (matches.length === 0) {
+                    resultsDiv.style.display = 'none';
+                    return;
+                }
+
+                resultsDiv.innerHTML = matches.map(stop => `
+                    <div class="autocomplete-item" onclick="selectDestination('${stop.name.replace(/'/g, "\\'")}')">
+                        ${stop.name}
+                    </div>
+                `).join('');
+
+                resultsDiv.style.display = 'block';
+            });
+
+            // Close autocomplete when clicking outside
+            document.addEventListener('click', function(e) {
+                if (e.target !== input && e.target.closest('.autocomplete-results') === null) {
+                    resultsDiv.style.display = 'none';
+                }
+            });
+        }
+
+        // Select destination from autocomplete
+        function selectDestination(stopName) {
+            document.getElementById('to-location').value = stopName;
+            document.getElementById('autocomplete-results').style.display = 'none';
+            checkFormValidity();
+        }
+
+        // Generate ticket
+        function generateTicket(event) {
+            event.preventDefault();
+
+            const fromLocation = document.getElementById('from-location').value;
+            const toLocation = document.getElementById('to-location').value;
+            const routeNumber = document.getElementById('route-number').value; // Use the full route name
+            const busRegistration = document.getElementById('bus-registration').value;
+
+            // Redirect to /invoice with query parameters
+            const params = new URLSearchParams({
+                from: fromLocation,
+                to: toLocation,
+                route: routeNumber,
+                bus: busRegistration,
+                timestamp: Date.now()
+            });
+
+            window.location.href = `/invoice?${params.toString()}`;
+        }
+
+        // Auto-refresh functionality
+        function startAutoRefresh() {
+            // Refresh data every 15 seconds
+            refreshInterval = setInterval(() => {
+                if (userLocation) {
+                    fetchNearestBuses();
+                    refreshSeconds = 15;
+                }
+            }, 15000);
+
+            // Update countdown timer
+            countdownInterval = setInterval(() => {
+                refreshSeconds--;
+                document.getElementById('refresh-timer').textContent = refreshSeconds;
+                
+                if (refreshSeconds <= 0) {
+                    refreshSeconds = 15;
+                }
+            }, 1000);
+        }
+
+        // Stop auto-refresh when page is hidden
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                clearInterval(refreshInterval);
+                clearInterval(countdownInterval);
+            } else {
+                startAutoRefresh();
+                if (userLocation) {
+                    fetchNearestBuses();
+                }
+            }
+        });
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('DTC Live Booking initialized');
+            
+            // Update status
+            updateStatus('Initializing...');
+            
+            // Fetch all stops for autocomplete
+            fetchAllStops();
+            
+            // Setup autocomplete
+            setupAutocomplete();
+            
+            // Get user location
+            getUserLocation();
+            
+            // Start auto-refresh
+            startAutoRefresh();
+            
+            // Add input listener for destination field
+            document.getElementById('to-location').addEventListener('input', checkFormValidity);
+        });
+
+        // Clean up on page unload
+        window.addEventListener('beforeunload', function() {
+            clearInterval(refreshInterval);
+            clearInterval(countdownInterval);
+        });
+    </script>
+</body>
+</html>

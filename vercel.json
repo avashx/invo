@@ -9,23 +9,31 @@
   "routes": [
     {
       "src": "/",
-      "dest": "/index.html"
+      "dest": "/server.js"
+    },
+    {
+      "src": "/invoice",
+      "dest": "/server.js"
     },
     {
       "src": "/live",
-      "dest": "/live.html"
+      "dest": "/server.js"
     },
     {
       "src": "/track",
-      "dest": "/track.html"
+      "dest": "/server.js"
     },
     {
       "src": "/api/(.*)",
       "dest": "/server.js"
     },
     {
-      "src": "/(.*\\.(html|css|js|jpg|jpeg|png|gif|svg|otf|ttf|woff|woff2|csv|proto|JPG))",
+      "src": "/(.*\\.(css|js|jpg|jpeg|png|gif|svg|otf|ttf|woff|woff2|csv|proto|JPG))",
       "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/server.js"
     }
   ],
   "env": {
