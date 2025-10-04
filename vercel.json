@@ -28,8 +28,8 @@
       "dest": "/server.js"
     },
     {
-      "src": "/DTC-Ticket Booking_files/(.*)",
-      "dest": "/DTC-Ticket Booking_files/$1"
+      "src": "/asset/(.*)",
+      "dest": "/asset/$1"
     },
     {
       "src": "/(.*\\.(css|js|jpg|jpeg|png|gif|svg|otf|ttf|woff|woff2|csv|proto|JPG))",

@@ -67,8 +67,8 @@ app.use((req, res, next) => {
     next();
 });
 
-// Serve static files from DTC-Ticket Booking_files directory explicitly
-app.use('/DTC-Ticket Booking_files', express.static(path.join(__dirname, 'DTC-Ticket Booking_files'), {
+// Serve static files from asset directory explicitly
+app.use('/asset', express.static(path.join(__dirname, 'asset'), {
     setHeaders: (res, filePath) => {
         if (filePath.endsWith('.css')) {
             res.setHeader('Content-Type', 'text/css');
