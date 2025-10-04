@@ -1100,8 +1100,10 @@
             if (!userLocation) return;
 
             try {
+                // Fetch more stops (20) to account for deduplication
+                // After removing duplicates, we'll still have at least 5 unique stops
                 const response = await fetch(
-                    `${API_BASE}/api/nearest-stops/${userLocation.latitude}/${userLocation.longitude}?limit=5`
+                    `${API_BASE}/api/nearest-stops/${userLocation.latitude}/${userLocation.longitude}?limit=20`
                 );
                 const data = await response.json();
 
@@ -1181,6 +1183,7 @@
             }
 
             // Deduplicate stops with same name - keep only the closest one
+            // Limit to 5 unique stops after deduplication
             const uniqueStops = [];
             const seenNames = new Set();
             
@@ -1188,6 +1191,11 @@
                 if (!seenNames.has(stop.name)) {
                     uniqueStops.push(stop);
                     seenNames.add(stop.name);
+                    
+                    // Stop after we have 5 unique stops
+                    if (uniqueStops.length >= 5) {
+                        break;
+                    }
                 }
             }
 
