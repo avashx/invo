@@ -12,24 +12,8 @@
       "dest": "/index.html"
     },
     {
-      "src": "/index.html",
-      "dest": "/index.html"
-    },
-    {
-      "src": "/invoice.html",
-      "dest": "/invoice.html"
-    },
-    {
-      "src": "/live.html",
-      "dest": "/live.html"
-    },
-    {
       "src": "/live",
       "dest": "/live.html"
-    },
-    {
-      "src": "/track.html",
-      "dest": "/track.html"
     },
     {
       "src": "/track",
@@ -40,12 +24,8 @@
       "dest": "/server.js"
     },
     {
-      "src": "/(.*\\.(html|css|js|jpg|jpeg|png|gif|svg|otf|ttf|woff|woff2|csv|proto))",
+      "src": "/(.*\\.(html|css|js|jpg|jpeg|png|gif|svg|otf|ttf|woff|woff2|csv|proto|JPG))",
       "dest": "/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/server.js"
     }
   ],
   "env": {
