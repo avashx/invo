@@ -20,12 +20,20 @@
       "dest": "/invoice.html"
     },
     {
+      "src": "/live.html",
+      "dest": "/live.html"
+    },
+    {
       "src": "/live",
-      "dest": "/server.js"
+      "dest": "/live.html"
+    },
+    {
+      "src": "/track.html",
+      "dest": "/track.html"
     },
     {
       "src": "/track",
-      "dest": "/server.js"
+      "dest": "/track.html"
     },
     {
       "src": "/api/(.*)",

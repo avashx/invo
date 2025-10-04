@@ -1,5 +1,5 @@
 # Don't ignore these files
-!*.ejs
+!*.html
 !*.csv
 !*.proto
 !*.otf
