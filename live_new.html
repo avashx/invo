@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live DTC Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Antic+Didone&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'alo';
+            src: url('./alo.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 60px 0;
+            background: #f8f9fa;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            color: #1c1c1e;
+            line-height: 1.5;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 420px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            border-bottom: 1px solid #e5e5ea;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .menu-dot {
+            width: 4px;
+            height: 4px;
+            background: #1c1c1e;
+            border-radius: 50%;
+        }
+
+        .nav-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: #1c1c1e;
+            letter-spacing: 2px;
+            margin: 0;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            text-transform: uppercase;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #007aff 30%, transparent 31%), 
+                        radial-gradient(circle, rgba(0, 122, 255, 0.3) 50%, transparent 51%),
+                        radial-gradient(circle, rgba(0, 122, 255, 0.15) 70%, transparent 71%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid #007aff;
+            position: relative;
+            animation: radar-pulse 2s infinite;
+        }
+        
+        @keyframes radar-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(0, 122, 255, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 0 20px rgba(0, 122, 255, 0);
+            }
+        }
+
+        .user-icon::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #007aff;
+            border-radius: 50%;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #1c1c1e;
+            background: white;
+            padding: 12px 20px;
+            border-top: 1px solid #f2f2f7;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 420px;
+            margin: 0 auto;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-loading {
+            background: #ff9500;
+            animation: pulse-loading 1.5s infinite;
+        }
+
+        .status-success {
+            background: #34c759;
+        }
+
+        .status-error {
+            background: #ff3b30;
+        }
+
+        .status-connected {
+            background: #007aff;
+        }
+
+        @keyframes pulse-loading {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        /* Main Radar Section */
+        .radar-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-top: 1px solid #f2f2f7;
+            border-radius: 15px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #1c1c1e;
+        }
+
+        .radar-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .radar-title {
+            font-size: 28px;
+            font-weight: 400;
+            color: #1c1c1e;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .radar-subtitle {
+            font-size: 16px;
+            color: #8e8e93;
+            margin: 0;
+            font-weight: 400;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .radar-display {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 0 auto 40px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            border: 2px solid #e5e5ea;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .radar-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: #1c1c1e;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .radar-rings .ring {
+            position: absolute;
+            border: 1px solid #e5e5ea;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ring-1 { width: 80px; height: 80px; }
+        .ring-2 { width: 160px; height: 160px; }
+        .ring-3 { width: 240px; height: 240px; }
+        .ring-4 { width: 320px; height: 320px; }
+
+        .radar-sweep {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 160px;
+            height: 2px;
+            background: linear-gradient(to right, rgba(28, 28, 30, 0.8), transparent);
+            transform-origin: left center;
+            transform: translate(0, -50%) rotate(0deg);
+            animation: sweep-smooth 4s linear infinite;
+        }
+
+        @keyframes sweep-smooth {
+            0% { transform: translate(0, -50%) rotate(0deg); }
+            100% { transform: translate(0, -50%) rotate(360deg); }
+        }
+
+        .distance-label {
+            position: absolute;
+            color: #8e8e93;
+            font-size: 11px;
+            font-weight: 500;
+            pointer-events: none;
+            background: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            border: 1px solid #e5e5ea;
+        }
+
+        .label-1 { top: 120px; right: 20px; }
+        .label-2 { top: 80px; right: 20px; }
+        .label-3 { top: 40px; right: 20px; }
+
+        .bus-marker {
+            background: #1c1c1e;
+            color: white;
+            border: 1px solid #1c1c1e;
+            padding: 4px 8px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 9px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translate(-50%, -50%);
+            letter-spacing: 0.3px;
+            min-width: 45px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .stop-marker {
+            background: #34c759;
+            color: white;
+            border: 1px solid #34c759;
+            padding: 2px 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 8px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            letter-spacing: 0.3px;
+            min-width: 20px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .bus-marker:hover, .stop-marker:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            z-index: 5;
+            box-shadow: 0 2px 8px rgba(28, 28, 30, 0.3);
+        }
+
+        /* Bus List Section */
+        .bus-list-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-top: 1px solid #f2f2f7;
+            border-radius: 15px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            font-size: 18px;
+            font-weight: 400;
+            color: #1c1c1e;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+            margin-bottom: 12px;
+            border: 1px solid #e5e5ea;
+        }
+
+        .list-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background: #007aff;
+            color: #ffffff;
+        }
+
+        .list-item-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .list-item-title, .list-item-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+        }
+
+        .list-item:hover .list-item-title,
+        .list-item:hover .list-item-header {
+            color: #ffffff;
+        }
+
+        .list-item-details, .list-item-detail {
+            font-size: 14px;
+            color: #86868b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .list-item:hover .list-item-details,
+        .list-item:hover .list-item-detail {
+            color: rgba(245, 245, 247, 0.8);
+        }
+
+        .distance-badge {
+            background: rgba(0, 122, 255, 0.1);
+            color: #007aff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .list-item:hover .distance-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        /* Form and Button Styles */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #8e8e93;
+            margin-bottom: 6px;
+        }
+
+        .form-group input, .form-group select, .form-select {
+            padding: 12px 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            color: #1c1c1e;
+            transition: all 0.2s ease;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-select:focus {
+            outline: none;
+            border-color: #1c1c1e;
+            background: white;
+            box-shadow: 0 0 0 2px rgba(28, 28, 30, 0.1);
+        }
+
+        .btn {
+            background: #1c1c1e;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            width: auto;
+            margin: 4px 6px 4px 0;
+            display: inline-block;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .btn-full-width {
+            width: 100%;
+            margin: 8px 0;
+        }
+
+        .btn:hover {
+            background: #007aff;
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-emergency {
+            background: #ff3b30;
+            font-size: 13px;
+            padding: 8px 12px;
+        }
+
+        .btn-emergency:hover {
+            background: #ff2d20;
+        }
+
+        /* Dropdown Styles */
+        .dropdown-container {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .dropdown-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #8e8e93;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .dropdown-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e5e5ea;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            color: #1c1c1e;
+            transition: all 0.2s ease;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 8px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 32px;
+        }
+
+        .dropdown-select:focus {
+            outline: none;
+            border-color: #1c1c1e;
+            background: white;
+            box-shadow: 0 0 0 2px rgba(28, 28, 30, 0.1);
+        }
+
+        .dropdown-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            gap: 8px;
+        }
+
+        /* Ticket Preview */
+        .ticket-preview {
+            background: #f8f9fa;
+            border: 2px dashed #e5e5ea;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .ticket-preview.active {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            border-color: #ffc107;
+        }
+
+        .ticket-header {
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1c1c1e;
+        }
+
+        .ticket-info {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ticket-fare {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1c1c1e;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        /* Log Section */
+        .log-container {
+            max-height: 150px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #e5e5ea;
+        }
+
+        .log-entry {
+            color: #1c1c1e;
+            font-size: 13px;
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #34c759;
+            animation: logEntry 0.3s ease;
+        }
+
+        .log-entry:last-child {
+            margin-bottom: 0;
+        }
+
+        .log-entry.warning, .log-entry.log-warning {
+            border-left-color: #ff9500;
+        }
+
+        .log-entry.error, .log-entry.log-error {
+            border-left-color: #ff3b30;
+        }
+
+        .log-entry.success, .log-entry.log-success {
+            border-left-color: #34c759;
+        }
+
+        .log-entry.info, .log-entry.log-info {
+            border-left-color: #007aff;
+        }
+
+        @keyframes logEntry {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .radar-display {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .ring-1 { width: 70px; height: 70px; }
+            .ring-2 { width: 140px; height: 140px; }
+            .ring-3 { width: 210px; height: 210px; }
+            .ring-4 { width: 280px; height: 280px; }
+
+            .distance-label.label-1 { top: 105px; right: 15px; }
+            .distance-label.label-2 { top: 70px; right: 15px; }
+            .distance-label.label-3 { top: 35px; right: 15px; }
+
+            .radar-sweep {
+                width: 140px;
+            }
+
+            .bus-list-section {
+                margin: 15px 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <div class="top-nav">
+            <div class="nav-left">
+                <div class="menu-icon">
+                    <div class="menu-dot"></div>
+                    <div class="menu-dot"></div>
+                    <div class="menu-dot"></div>
+                    <div class="menu-dot"></div>
+                    <div class="menu-dot"></div>
+                </div>
+            </div>
+            <h1 class="nav-title">DTC Live</h1>
+            <div class="nav-right">
+                <div class="user-icon"></div>
+            </div>
+        </div>
+
+        <!-- Radar Section -->
+        <div class="radar-section">
+            <div class="radar-header">
+                <h2 class="radar-title">Live Bus Tracker</h2>
+                <p class="radar-subtitle">Real-time DTC Bus Information</p>
+            </div>
+            
+            <div class="radar-display">
+                <div class="radar-rings">
+                    <div class="ring ring-1"></div>
+                    <div class="ring ring-2"></div>
+                    <div class="ring ring-3"></div>
+                    <div class="ring ring-4"></div>
+                </div>
+                <div class="radar-sweep"></div>
+                <div class="radar-center"></div>
+                <div class="distance-label label-3">5km</div>
+                <div class="distance-label label-2">3km</div>
+                <div class="distance-label label-1">1km</div>
+                <div id="radarMarkers"></div>
+            </div>
+        </div>
+
+        <!-- Nearest Bus Stops Section -->
+        <div class="bus-list-section">
+            <h3 class="section-header">Top 5 Nearest Bus Stops</h3>
+            
+            <div class="dropdown-container">
+                <label class="dropdown-label" for="stopsDropdown">Select Bus Stop:</label>
+                <select id="stopsDropdown" class="dropdown-select">
+                    <option value="">Getting your location...</option>
+                </select>
+                <div class="dropdown-actions">
+                    <button class="btn" onclick="focusOnSelectedStop()">Focus Stop</button>
+                    <button class="btn" onclick="refreshStopsData()">Refresh</button>
+                </div>
+            </div>
+            
+            <div id="stopsList" style="display: none;">
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <div class="list-item-title">Getting your location...</div>
+                        <div class="list-item-details">Please allow location access when prompted</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Nearest Buses Section -->
+        <div class="bus-list-section">
+            <h3 class="section-header">Top 10 Nearest Buses</h3>
+            
+            <div class="dropdown-container">
+                <label class="dropdown-label" for="busesDropdown">Select Bus:</label>
+                <select id="busesDropdown" class="dropdown-select">
+                    <option value="">Loading live bus data...</option>
+                </select>
+                <div class="dropdown-actions">
+                    <button class="btn" onclick="focusOnSelectedBus()">Track Bus</button>
+                    <button class="btn" onclick="refreshBusesData()">Refresh</button>
+                </div>
+            </div>
+            
+            <div id="busesList" style="display: none;">
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <div class="list-item-title">Loading live bus data...</div>
+                        <div class="list-item-details">Connecting to Delhi Transport Corporation servers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Generation Section -->
+                <!-- Ticket Generation Section -->
+        <div class="bus-list-section">
+            <h3 class="section-header">Quick Ticket Generator</h3>
+            <div class="form-group">
+                <label for="fromStopSelect">From Stop:</label>
+                <select id="fromStopSelect" class="form-select">
+                    <option value="">Select departure stop...</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="toStopSelect">To Stop:</label>
+                <select id="toStopSelect" class="form-select">
+                    <option value="">Select destination stop...</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="busTypeSelect">Bus Type:</label>
+                <select id="busTypeSelect" class="form-select">
+                    <option value="regular">Regular Bus - ₹10</option>
+                    <option value="ac">AC Bus - ₹25</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-full-width" id="generateTicketBtn">Generate Ticket</button>
+
+            <!-- Ticket Preview -->
+            <div id="ticketPreview" class="ticket-preview">
+                <div class="ticket-header">Delhi Transport Corporation</div>
+                <div style="font-size: 14px; color: #666; margin-bottom: 15px;">
+                    Select departure and destination to generate ticket
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Activity Log Section -->
+        <div class="bus-list-section">
+            <h3 class="section-header">Live Activity Log</h3>
+            <div id="activityLog" class="log-container">
+                <div class="log-entry info">
+                    [00:00:00] System initialized...
+                </div>
+            </div>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="bus-list-section">
+            <button class="btn" id="refreshBtn">Refresh All Data</button>
+            <button class="btn btn-emergency" id="forceInitBtn">Emergency Alert</button>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span id="statusIndicator" class="status-indicator status-loading"></span>
+            <span id="connectionStatus">Connecting to Live Data...</span>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            API_URLS: [
+                'http://localhost:3001',
+                'http://localhost:3000',
+                'https://bus-19wu.onrender.com'
+            ],
+            RADAR_RANGE: 5, // km
+            MAX_BUSES: 10,
+            MAX_STOPS: 5, // Changed to 5 as requested
+            UPDATE_INTERVAL: 15000, // 15 seconds
+            FALLBACK_LOCATION: { lat: 28.7041, lng: 77.1025 } // Delhi center
+        };
+
+        // Global variables
+        let userLocation = null;
+        let allBuses = [];
+        let allStops = [];
+        let updateInterval = null;
+        let nearestStops = [];
+
+        // Utility functions
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('activityLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            
+            logContainer.insertBefore(logEntry, logContainer.firstChild);
+            
+            // Keep only last 20 entries
+            while (logContainer.children.length > 20) {
+                logContainer.removeChild(logContainer.lastChild);
+            }
+            
+            logContainer.scrollTop = 0;
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of the Earth in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        function updateConnectionStatus(status, message) {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const connectionStatus = document.getElementById('connectionStatus');
+            
+            statusIndicator.className = `status-indicator status-${status}`;
+            connectionStatus.textContent = message;
+        }
+
+        async function fetchWithFallback(endpoints, path = '') {
+            for (let endpoint of endpoints) {
+                try {
+                    const response = await fetch(`${endpoint}${path}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (error) {
+                    addLog(`Failed to connect to ${endpoint}: ${error.message}`, 'warning');
+                }
+            }
+            throw new Error('All API endpoints failed');
+        }
+
+        function getUserLocation() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocation not supported'));
+                    return;
+                }
+
+                updateConnectionStatus('loading', 'Getting your location...');
+                addLog('Requesting location access...', 'info');
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const location = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        addLog(`Location acquired: ${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`, 'success');
+                        resolve(location);
+                    },
+                    (error) => {
+                        addLog(`Location error: ${error.message}. Using Delhi center.`, 'warning');
+                        resolve(CONFIG.FALLBACK_LOCATION);
+                    },
+                    { 
+                        enableHighAccuracy: true, 
+                        timeout: 10000, 
+                        maximumAge: 300000 
+                    }
+                );
+            });
+        }
+
+        async function fetchBusData() {
+            try {
+                updateConnectionStatus('loading', 'Loading bus data...');
+                const data = await fetchWithFallback(CONFIG.API_URLS, '/api/buses');
+                
+                if (data && data.buses) {
+                    allBuses = data.buses;
+                    addLog(`Loaded ${allBuses.length} buses successfully`, 'success');
+                    updateConnectionStatus('success', `Connected - ${allBuses.length} buses loaded`);
+                    return data.buses;
+                } else {
+                    throw new Error('No bus data received');
+                }
+            } catch (error) {
+                addLog(`Failed to load bus data: ${error.message}`, 'error');
+                updateConnectionStatus('error', 'Failed to connect to bus data');
+                return [];
+            }
+        }
+
+        async function fetchStopsData() {
+            try {
+                const data = await fetchWithFallback(CONFIG.API_URLS, '/api/stops');
+                
+                if (data && data.stops) {
+                    allStops = data.stops;
+                    addLog(`Loaded ${allStops.length} bus stops`, 'success');
+                    return data.stops;
+                } else {
+                    throw new Error('No stops data received');
+                }
+            } catch (error) {
+                addLog(`Failed to load stops data: ${error.message}`, 'error');
+                return [];
+            }
+        }
+
+        function findNearestStops(userLat, userLng, stops, maxCount = CONFIG.MAX_STOPS) {
+            if (!stops || stops.length === 0) return [];
+            
+            return stops
+                .map(stop => ({
+                    ...stop,
+                    distance: calculateDistance(userLat, userLng, 
+                        parseFloat(stop.stop_lat), parseFloat(stop.stop_lon))
+                }))
+                .filter(stop => stop.distance <= CONFIG.RADAR_RANGE)
+                .sort((a, b) => a.distance - b.distance)
+                .slice(0, maxCount);
+        }
+
+        function findNearestBuses(userLat, userLng, buses, maxCount = CONFIG.MAX_BUSES) {
+            if (!buses || buses.length === 0) return [];
+            
+            return buses
+                .filter(bus => bus.latitude && bus.longitude)
+                .map(bus => ({
+                    ...bus,
+                    distance: calculateDistance(userLat, userLng, 
+                        parseFloat(bus.latitude), parseFloat(bus.longitude))
+                }))
+                .filter(bus => bus.distance <= CONFIG.RADAR_RANGE)
+                .sort((a, b) => a.distance - b.distance)
+                .slice(0, maxCount);
+        }
+
+        function updateNearestStops(stops) {
+            const container = document.getElementById('stopsList');
+            const dropdown = document.getElementById('stopsDropdown');
+            
+            if (!stops || stops.length === 0) {
+                dropdown.innerHTML = '<option value="">No stops found within range</option>';
+                return;
+            }
+
+            // Update dropdown
+            dropdown.innerHTML = '<option value="">Select a bus stop...</option>' + 
+                stops.map((stop, index) => 
+                    `<option value="${stop.stop_id}" data-index="${index}">${stop.stop_name} (${stop.distance.toFixed(2)}km)</option>`
+                ).join('');
+
+            // Store stops data for reference
+            window.currentStops = stops;
+            nearestStops = stops;
+            updateTicketStopOptions();
+        }
+
+        function updateNearestBuses(buses) {
+            const container = document.getElementById('busesList');
+            const dropdown = document.getElementById('busesDropdown');
+            
+            if (!buses || buses.length === 0) {
+                dropdown.innerHTML = '<option value="">No buses found within range</option>';
+                return;
+            }
+
+            // Update dropdown
+            dropdown.innerHTML = '<option value="">Select a bus...</option>' + 
+                buses.map((bus, index) => 
+                    `<option value="${bus.vehicle_id}" data-index="${index}">Route ${bus.route_short_name || 'Unknown'} - ${bus.vehicle_label || bus.vehicle_id} (${bus.distance.toFixed(2)}km)</option>`
+                ).join('');
+
+            // Store buses data for reference
+            window.currentBuses = buses;
+        }
+
+        function focusOnSelectedStop() {
+            const dropdown = document.getElementById('stopsDropdown');
+            const selectedStopId = dropdown.value;
+            
+            if (!selectedStopId) {
+                addLog('Please select a bus stop first', 'warning');
+                return;
+            }
+            
+            const selectedOption = dropdown.options[dropdown.selectedIndex];
+            const stopName = selectedOption.text;
+            addLog(`Focused on stop: ${stopName}`, 'info');
+            focusOnStop(selectedStopId);
+        }
+
+        function focusOnSelectedBus() {
+            const dropdown = document.getElementById('busesDropdown');
+            const selectedBusId = dropdown.value;
+            
+            if (!selectedBusId) {
+                addLog('Please select a bus first', 'warning');
+                return;
+            }
+            
+            const selectedOption = dropdown.options[dropdown.selectedIndex];
+            const busInfo = selectedOption.text;
+            addLog(`Tracking bus: ${busInfo}`, 'info');
+            focusOnBus(selectedBusId);
+        }
+
+        function refreshStopsData() {
+            addLog('Refreshing bus stops data...', 'info');
+            if (userLocation && allStops.length > 0) {
+                const nearStops = findNearestStops(userLocation.lat, userLocation.lng, allStops);
+                updateNearestStops(nearStops);
+                addLog('Bus stops data refreshed', 'success');
+            }
+        }
+
+        function refreshBusesData() {
+            addLog('Refreshing buses data...', 'info');
+            fetchBusData().then(buses => {
+                if (userLocation && buses.length > 0) {
+                    const nearBuses = findNearestBuses(userLocation.lat, userLocation.lng, buses);
+                    updateNearestBuses(nearBuses);
+                    addLog('Buses data refreshed', 'success');
+                }
+            });
+        }
+
+        function updateTicketStopOptions() {
+            const fromSelect = document.getElementById('fromStopSelect');
+            const toSelect = document.getElementById('toStopSelect');
+            
+            const options = nearestStops.map(stop => 
+                `<option value="${stop.stop_id}">${stop.stop_name} (${stop.distance.toFixed(2)}km)</option>`
+            ).join('');
+            
+            fromSelect.innerHTML = '<option value="">Select departure stop...</option>' + options;
+            toSelect.innerHTML = '<option value="">Select destination stop...</option>' + options;
+        }
+
+        function updateRadarDisplay(buses, stops) {
+            const container = document.getElementById('radarMarkers');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (!userLocation) return;
+            
+            const radarRadius = 160; // Half of radar display width
+            
+            // Add bus markers
+            buses.forEach(bus => {
+                if (bus.distance <= CONFIG.RADAR_RANGE) {
+                    const angle = Math.random() * 2 * Math.PI; // Random angle for demo
+                    const distance = (bus.distance / CONFIG.RADAR_RANGE) * radarRadius;
+                    
+                    const x = radarRadius + distance * Math.cos(angle);
+                    const y = radarRadius + distance * Math.sin(angle);
+                    
+                    const marker = document.createElement('div');
+                    marker.className = 'bus-marker';
+                    marker.style.left = `${x}px`;
+                    marker.style.top = `${y}px`;
+                    marker.textContent = bus.route_short_name || 'BUS';
+                    marker.title = `Route ${bus.route_short_name} - ${bus.distance.toFixed(2)}km`;
+                    
+                    container.appendChild(marker);
+                }
+            });
+            
+            // Add stop markers
+            stops.forEach(stop => {
+                if (stop.distance <= CONFIG.RADAR_RANGE) {
+                    const angle = Math.random() * 2 * Math.PI; // Random angle for demo
+                    const distance = (stop.distance / CONFIG.RADAR_RANGE) * radarRadius;
+                    
+                    const x = radarRadius + distance * Math.cos(angle);
+                    const y = radarRadius + distance * Math.sin(angle);
+                    
+                    const marker = document.createElement('div');
+                    marker.className = 'stop-marker';
+                    marker.style.left = `${x}px`;
+                    marker.style.top = `${y}px`;
+                    marker.title = `${stop.stop_name} - ${stop.distance.toFixed(2)}km`;
+                    
+                    container.appendChild(marker);
+                }
+            });
+        }
+
+        function generateTicket() {
+            const fromStopId = document.getElementById('fromStopSelect').value;
+            const toStopId = document.getElementById('toStopSelect').value;
+            const busType = document.getElementById('busTypeSelect').value;
+            
+            if (!fromStopId || !toStopId) {
+                addLog('Please select both departure and destination stops', 'warning');
+                return;
+            }
+            
+            if (fromStopId === toStopId) {
+                addLog('Departure and destination cannot be the same', 'warning');
+                return;
+            }
+            
+            const fromStop = nearestStops.find(s => s.stop_id === fromStopId);
+            const toStop = nearestStops.find(s => s.stop_id === toStopId);
+            
+            if (!fromStop || !toStop) {
+                addLog('Selected stops not found', 'error');
+                return;
+            }
+            
+            const distance = calculateDistance(
+                parseFloat(fromStop.stop_lat), parseFloat(fromStop.stop_lon),
+                parseFloat(toStop.stop_lat), parseFloat(toStop.stop_lon)
+            );
+            
+            const baseFare = busType === 'ac' ? 25 : 10;
+            const distanceFare = Math.max(0, Math.floor(distance - 2) * 5); // ₹5 per km after 2km
+            const totalFare = baseFare + distanceFare;
+            
+            const ticketPreview = document.getElementById('ticketPreview');
+            ticketPreview.className = 'ticket-preview active';
+            ticketPreview.innerHTML = `
+                <div class="ticket-header">Delhi Transport Corporation</div>
+                <div class="ticket-info">
+                    <span>From:</span>
+                    <span>${fromStop.stop_name}</span>
+                </div>
+                <div class="ticket-info">
+                    <span>To:</span>
+                    <span>${toStop.stop_name}</span>
+                </div>
+                <div class="ticket-info">
+                    <span>Distance:</span>
+                    <span>${distance.toFixed(2)} km</span>
+                </div>
+                <div class="ticket-info">
+                    <span>Bus Type:</span>
+                    <span>${busType === 'ac' ? 'AC Bus' : 'Regular Bus'}</span>
+                </div>
+                <div class="ticket-fare">Total Fare: ₹${totalFare}</div>
+            `;
+            
+            addLog(`Ticket generated: ${fromStop.stop_name} → ${toStop.stop_name} (₹${totalFare})`, 'success');
+        }
+
+        function focusOnStop(stopId) {
+            addLog(`Focused on stop: ${stopId}`, 'info');
+        }
+
+        function focusOnBus(vehicleId) {
+            addLog(`Focused on bus: ${vehicleId}`, 'info');
+        }
+
+        async function refreshData() {
+            addLog('Refreshing all data...', 'info');
+            await initialize();
+        }
+
+        function emergencyAlert() {
+            addLog('EMERGENCY ALERT ACTIVATED', 'error');
+            addLog('Emergency services have been notified', 'error');
+            alert('Emergency alert sent to DTC Control Room!');
+        }
+
+        async function initialize() {
+            try {
+                addLog('Initializing live tracker system...', 'info');
+                
+                // Get user location
+                userLocation = await getUserLocation();
+                
+                // Fetch data
+                const [buses, stops] = await Promise.all([
+                    fetchBusData(),
+                    fetchStopsData()
+                ]);
+                
+                if (userLocation && stops.length > 0) {
+                    // Find nearest stops and buses
+                    const nearBuses = findNearestBuses(userLocation.lat, userLocation.lng, buses);
+                    const nearStops = findNearestStops(userLocation.lat, userLocation.lng, stops);
+                    
+                    // Update UI
+                    updateNearestStops(nearStops);
+                    updateNearestBuses(nearBuses);
+                    updateRadarDisplay(nearBuses, nearStops);
+                    
+                    addLog('System initialization complete!', 'success');
+                    updateConnectionStatus('connected', `Live - ${buses.length} buses tracked`);
+                    
+                    // Start auto-refresh
+                    if (updateInterval) clearInterval(updateInterval);
+                    updateInterval = setInterval(refreshData, CONFIG.UPDATE_INTERVAL);
+                    
+                } else {
+                    throw new Error('Failed to initialize with valid data');
+                }
+                
+            } catch (error) {
+                addLog(`Initialization failed: ${error.message}`, 'error');
+                updateConnectionStatus('error', 'System offline');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('refreshBtn').addEventListener('click', refreshData);
+        document.getElementById('forceInitBtn').addEventListener('click', emergencyAlert);
+        document.getElementById('generateTicketBtn').addEventListener('click', generateTicket);
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            addLog('Mobile app interface loaded', 'info');
+            initialize();
+        });
+    </script>
+</body>
+</html>

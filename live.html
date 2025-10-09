@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live DTC Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Antic+Didone&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'alo';
+            src: url('./alo.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0 0 60px 0;
+            background: #f8f9fa;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            color: #1c1c1e;
+            line-height: 1.5;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 420px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Bar */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: white;
+            border-bottom: 1px solid #e5e5ea;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .menu-dot {
+            width: 4px;
+            height: 4px;
+            background: #1c1c1e;
+            border-radius: 50%;
+        }
+
+        .nav-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: #1c1c1e;
+            letter-spacing: 2px;
+            margin: 0;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            text-transform: uppercase;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #007aff 30%, transparent 31%), 
+                        radial-gradient(circle, rgba(0, 122, 255, 0.3) 50%, transparent 51%),
+                        radial-gradient(circle, rgba(0, 122, 255, 0.15) 70%, transparent 71%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid #007aff;
+            position: relative;
+            animation: radar-pulse 2s infinite;
+        }
+        
+        @keyframes radar-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 122, 255, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(0, 122, 255, 0.3);
+            }
+            100% {
+                box-shadow: 0 0 0 20px rgba(0, 122, 255, 0);
+            }
+        }
+
+        .user-icon::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #007aff;
+            border-radius: 50%;
+        }
+
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            color: #1c1c1e;
+            background: white;
+            padding: 12px 20px;
+            border-top: 1px solid #f2f2f7;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 420px;
+            margin: 0 auto;
+            z-index: 100;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-loading {
+            background: #ff9500;
+            animation: pulse-loading 1.5s infinite;
+        }
+
+        .status-success {
+            background: #34c759;
+        }
+
+        .status-error {
+            background: #ff3b30;
+        }
+
+        .status-connected {
+            background: #007aff;
+        }
+
+        @keyframes pulse-loading {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+
+        /* Main Radar Section */
+        .radar-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-top: 1px solid #f2f2f7;
+            border-radius: 15px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #1c1c1e;
+        }
+
+        .radar-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .radar-title {
+            font-size: 28px;
+            font-weight: 400;
+            color: #1c1c1e;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.5px;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .radar-subtitle {
+            font-size: 16px;
+            color: #8e8e93;
+            margin: 0;
+            font-weight: 400;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .radar-display {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            margin: 0 auto 40px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            border: 2px solid #e5e5ea;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .radar-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            background: #1c1c1e;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .radar-rings .ring {
+            position: absolute;
+            border: 1px solid #e5e5ea;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .ring-1 { width: 80px; height: 80px; }
+        .ring-2 { width: 160px; height: 160px; }
+        .ring-3 { width: 240px; height: 240px; }
+        .ring-4 { width: 320px; height: 320px; }
+
+        .radar-sweep {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 160px;
+            height: 2px;
+            background: linear-gradient(to right, rgba(28, 28, 30, 0.8), transparent);
+            transform-origin: left center;
+            transform: translate(0, -50%) rotate(0deg);
+            animation: sweep-smooth 4s linear infinite;
+        }
+
+        @keyframes sweep-smooth {
+            0% { transform: translate(0, -50%) rotate(0deg); }
+            100% { transform: translate(0, -50%) rotate(360deg); }
+        }
+
+        .distance-label {
+            position: absolute;
+            color: #8e8e93;
+            font-size: 11px;
+            font-weight: 500;
+            pointer-events: none;
+            background: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            border: 1px solid #e5e5ea;
+        }
+
+        .label-1 { top: 120px; right: 20px; }
+        .label-2 { top: 80px; right: 20px; }
+        .label-3 { top: 40px; right: 20px; }
+
+        .bus-marker {
+            background: #1c1c1e;
+            color: white;
+            border: 1px solid #1c1c1e;
+            padding: 4px 8px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 9px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translate(-50%, -50%);
+            letter-spacing: 0.3px;
+            min-width: 45px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .stop-marker {
+            background: #34c759;
+            color: white;
+            border: 1px solid #34c759;
+            padding: 2px 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 8px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            letter-spacing: 0.3px;
+            min-width: 20px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .bus-marker:hover, .stop-marker:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            z-index: 5;
+            box-shadow: 0 2px 8px rgba(28, 28, 30, 0.3);
+        }
+
+        /* Bus List Section */
+        .bus-list-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-top: 1px solid #f2f2f7;
+            border-radius: 15px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-header {
+            font-size: 20px;
+            font-weight: 400;
+            color: #1c1c1e;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #ffffff;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
+            margin-bottom: 12px;
+            border: 1px solid #e5e5ea;
+        }
+
+        .list-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background: #007aff;
+            color: #ffffff;
+        }
+
+        .list-item-info {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 4px;
+        }
+
+        .list-item:hover .list-item-title {
+            color: #ffffff;
+        }
+
+        .list-item-details {
+            font-size: 14px;
+            color: #86868b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .list-item:hover .list-item-details {
+            color: rgba(245, 245, 247, 0.8);
+        }
+
+        .distance-badge {
+            background: rgba(0, 122, 255, 0.1);
+            color: #007aff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .list-item:hover .distance-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+
+        /* Form and Button Styles */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #8e8e93;
+            margin-bottom: 6px;
+        }
+
+        .form-group input, .form-group select {
+            padding: 12px 16px;
+            border: 1px solid #e5e5ea;
+            border-radius: 12px;
+            font-size: 16px;
+            background: white;
+            color: #1c1c1e;
+            transition: all 0.2s ease;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1c1c1e;
+            background: white;
+            box-shadow: 0 0 0 2px rgba(28, 28, 30, 0.1);
+        }
+
+        .btn {
+            background: #1c1c1e;
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin-bottom: 12px;
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+        }
+
+        .btn:hover {
+            background: #007aff;
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-emergency {
+            background: #ff3b30;
+        }
+
+        .btn-emergency:hover {
+            background: #ff2d20;
+        }
+
+        /* Ticket Preview */
+        .ticket-preview {
+            background: #f8f9fa;
+            border: 2px dashed #e5e5ea;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .ticket-preview.active {
+            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+            border-color: #ffc107;
+        }
+
+        .ticket-header {
+            font-family: 'Antic Didone', 'Times New Roman', Georgia, serif;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1c1c1e;
+        }
+
+        .ticket-info {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ticket-fare {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1c1c1e;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+
+        /* Log Section */
+        .log-container {
+            max-height: 150px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #e5e5ea;
+        }
+
+        .log-entry {
+            color: #1c1c1e;
+            font-size: 13px;
+            margin-bottom: 8px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 8px;
+            border-left: 3px solid #34c759;
+            animation: logEntry 0.3s ease;
+        }
+
+        .log-entry:last-child {
+            margin-bottom: 0;
+        }
+
+        .log-entry.warning {
+            border-left-color: #ff9500;
+        }
+
+        .log-entry.error {
+            border-left-color: #ff3b30;
+        }
+
+        .log-entry.success {
+            border-left-color: #34c759;
+        }
+
+        .log-entry.info {
+            border-left-color: #007aff;
+        }
+
+        @keyframes logEntry {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .radar-display {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .ring-1 { width: 70px; height: 70px; }
+            .ring-2 { width: 140px; height: 140px; }
+            .ring-3 { width: 210px; height: 210px; }
+            .ring-4 { width: 280px; height: 280px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <div class="top-nav">
+            <div class="nav-left">
+                <div class="menu-icon">
+                    <div class="menu-dot"></div>
+                    <div class="menu-dot"></div>
+                    <div class="menu-dot"></div>
+                    <div class="menu-dot"></div>
+                    <div class="menu-dot"></div>
+                </div>
+            </div>
+            <h1 class="nav-title">DTC Live</h1>
+            <div class="nav-right">
+                <div class="user-icon"></div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar" id="statusBar">
+            <span class="status-loading"></span> Initializing system...
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="controls">
+            <button class="btn btn-emergency control-btn" id="forceInitBtn">🚨 Emergency Initialize</button>
+            <button class="btn control-btn" id="refreshBtn">🔄 Refresh Location & Data</button>
+        </div>
+
+        <!-- Radar Section -->
+        <div class="radar-section">
+            <div class="radar-header">
+                <h2 class="radar-title">Live Bus Tracker</h2>
+                <p class="radar-subtitle">Real-time DTC Bus Information</p>
+            </div>
+            
+            <div class="radar-display">
+                <div class="radar-rings">
+                    <div class="ring ring-1"></div>
+                    <div class="ring ring-2"></div>
+                    <div class="ring ring-3"></div>
+                    <div class="ring ring-4"></div>
+                </div>
+                <div class="radar-sweep"></div>
+                <div class="radar-center"></div>
+                <div class="distance-label label-3">5km</div>
+                <div class="distance-label label-2">3km</div>
+                <div class="distance-label label-1">1km</div>
+                <div id="radarMarkers"></div>
+            </div>
+        </div>
+
+        <!-- Nearest Bus Stops Section -->
+        <div class="bus-list-section">
+            <h3 class="section-header">🚏 Top 5 Nearest Bus Stops</h3>
+            <div id="stopsList">
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <div class="list-item-title">Getting your location...</div>
+                        <div class="list-item-details">Please allow location access when prompted</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bus List Section -->
+        <div class="section">
+            <div class="section-title">� Nearest Buses (Top 10)</div>
+            <div id="busesList">
+                <div class="list-item">
+                    <div class="list-item-header">Loading live bus data...</div>
+                    <div class="list-item-detail">Connecting to Delhi Transport Corporation servers</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Section -->
+        <div class="section">
+            <div class="section-title">🎫 Quick Ticket</div>
+            <div class="ticket-form">
+                <div class="form-group">
+                    <label class="form-label">From Stop</label>
+                    <select class="form-select" id="fromStopSelect">
+                        <option value="">Select departure stop...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">To Stop</label>
+                    <select class="form-select" id="toStopSelect">
+                        <option value="">Select destination stop...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Bus Type</label>
+                    <select class="form-select" id="busTypeSelect">
+                        <option value="regular">Regular Bus - ₹10</option>
+                        <option value="ac">AC Bus - ₹25</option>
+                    </select>
+                </div>
+                <button class="btn" id="generateTicketBtn">Generate Ticket</button>
+            </div>
+        </div>
+
+        <!-- Ticket Preview Section -->
+        <div class="section">
+            <div class="section-title">🎟️ Ticket Preview</div>
+            <div class="ticket-preview" id="ticketPreview">
+                <div class="ticket-header">Delhi Transport Corporation</div>
+                <div class="list-item-detail">Select stops above to generate ticket</div>
+            </div>
+        </div>
+
+        <!-- Live Activity Log Section -->
+        <div class="section">
+            <div class="section-title">📊 Live Activity Log</div>
+            <div class="log-container" id="logContainer">
+                <div class="log-entry log-info">
+                    <span class="log-timestamp">[INIT]</span> Application starting...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CONFIG = {
+            API_URLS: [
+                'http://localhost:3001',
+                'http://localhost:3000',
+                'https://bus-19wu.onrender.com'
+            ],
+            RADAR_RANGE: 5, // km
+            MAX_BUSES: 10,
+            MAX_STOPS: 5, // Changed to 5 as requested
+            UPDATE_INTERVAL: 15000, // 15 seconds
+            FALLBACK_LOCATION: { lat: 28.7041, lng: 77.1025 } // Delhi center
+        };
+
+        // Global variables
+        let userLocation = null;
+        let allBuses = [];
+        let allStops = [];
+        let updateInterval = null;
+        let nearestStops = [];
+
+        // Utility functions
+        function addLog(message, type = 'info') {
+            const logContainer = document.getElementById('logContainer');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span> ${message}`;
+            
+            logContainer.insertBefore(logEntry, logContainer.firstChild);
+            
+            // Keep only last 30 entries
+            const entries = logContainer.querySelectorAll('.log-entry');
+            if (entries.length > 30) {
+                entries[entries.length - 1].remove();
+            }
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        function updateStatus(message, loading = false) {
+            const statusBar = document.getElementById('statusBar');
+            statusBar.innerHTML = loading ? `<span class="status-loading"></span> ${message}` : message;
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in kilometers
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function getLocationCoordinates() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    reject(new Error('Geolocation not supported'));
+                    return;
+                }
+
+                addLog('📍 Requesting location permission...', 'info');
+                updateStatus('Requesting location permission...', true);
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        userLocation = { lat: latitude, lng: longitude };
+                        addLog(`✅ Location obtained: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`, 'success');
+                        updateStatus(`📍 Location: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`);
+                        resolve(userLocation);
+                    },
+                    (error) => {
+                        addLog(`⚠️ Location error: ${error.message}`, 'warning');
+                        addLog('🏛️ Using Delhi center as fallback location', 'info');
+                        userLocation = CONFIG.FALLBACK_LOCATION;
+                        updateStatus(`📍 Using Delhi Center (Fallback)`);
+                        resolve(userLocation);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 300000
+                    }
+                );
+            });
+        }
+
+        async function fetchBusData() {
+            for (const baseUrl of CONFIG.API_URLS) {
+                try {
+                    addLog(`Fetching bus data from ${baseUrl}...`, 'info');
+                    updateStatus('Fetching live bus data...', true);
+
+                    const response = await fetch(`${baseUrl}/api/buses`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Cache-Control': 'no-cache'
+                        },
+                        timeout: 10000
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    // Handle different response formats
+                    if (Array.isArray(data)) {
+                        allBuses = data;
+                    } else if (data.buses && Array.isArray(data.buses)) {
+                        allBuses = data.buses;
+                    } else {
+                        throw new Error('Invalid response format');
+                    }
+
+                    // Filter valid buses
+                    allBuses = allBuses.filter(bus => 
+                        bus.latitude && bus.longitude &&
+                        bus.latitude !== 0 && bus.longitude !== 0 &&
+                        bus.busNo && bus.busNo !== 'Unknown'
+                    );
+
+                    addLog(`Successfully loaded ${allBuses.length} buses`, 'success');
+                    return true;
+
+                } catch (error) {
+                    addLog(`Failed to fetch from ${baseUrl}: ${error.message}`, 'error');
+                    continue;
+                }
+            }
+            
+            addLog('All bus data sources failed', 'error');
+            return false;
+        }
+
+        async function fetchStopsData() {
+            for (const baseUrl of CONFIG.API_URLS) {
+                try {
+                    addLog(`Fetching stops data from ${baseUrl}...`, 'info');
+
+                    const response = await fetch(`${baseUrl}/api/all-stops`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Cache-Control': 'no-cache'
+                        },
+                        timeout: 10000
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    
+                    // Handle different response formats
+                    if (Array.isArray(data)) {
+                        allStops = data;
+                    } else if (data.stops && Array.isArray(data.stops)) {
+                        allStops = data.stops;
+                    } else {
+                        throw new Error('Invalid response format');
+                    }
+
+                    // Filter valid stops
+                    allStops = allStops.filter(stop => 
+                        stop.latitude && stop.longitude &&
+                        stop.latitude !== 0 && stop.longitude !== 0 &&
+                        stop.name
+                    );
+
+                    addLog(`Successfully loaded ${allStops.length} bus stops`, 'success');
+                    return true;
+
+                } catch (error) {
+                    addLog(`Failed to fetch stops from ${baseUrl}: ${error.message}`, 'error');
+                    continue;
+                }
+            }
+            
+            addLog('All stops data sources failed', 'error');
+            return false;
+        }
+
+        function findNearestItems(items, limit, userLat, userLng) {
+            return items
+                .map(item => ({
+                    ...item,
+                    distance: calculateDistance(userLat, userLng, item.latitude, item.longitude)
+                }))
+                .filter(item => item.distance <= CONFIG.RADAR_RANGE)
+                .sort((a, b) => a.distance - b.distance)
+                .slice(0, limit);
+        }
+
+        function updateStopsList(nearestStops) {
+            const stopsList = document.getElementById('stopsList');
+            
+            if (nearestStops.length === 0) {
+                stopsList.innerHTML = '<div class="list-item"><div class="list-item-header">No stops found</div><div class="list-item-detail">No bus stops within 5km radius</div></div>';
+                return;
+            }
+
+            stopsList.innerHTML = nearestStops.map((stop, index) => `
+                <div class="list-item stop-item">
+                    <div class="list-item-header">
+                        <span>${index + 1}. ${stop.name}</span>
+                        <span class="distance-badge">${stop.distance.toFixed(2)} km</span>
+                    </div>
+                    <div class="list-item-detail">
+                        📍 Coordinates: ${stop.latitude.toFixed(4)}, ${stop.longitude.toFixed(4)}
+                    </div>
+                </div>
+            `).join('');
+
+            // Update ticket form dropdowns
+            updateTicketDropdowns(nearestStops);
+        }
+
+        function updateBusesList(nearestBuses) {
+            const busesList = document.getElementById('busesList');
+            
+            if (nearestBuses.length === 0) {
+                busesList.innerHTML = '<div class="list-item"><div class="list-item-header">No buses found</div><div class="list-item-detail">No buses within 5km radius</div></div>';
+                return;
+            }
+
+            busesList.innerHTML = nearestBuses.map((bus, index) => `
+                <div class="list-item bus-item">
+                    <div class="list-item-header">
+                        <span>${index + 1}. Bus ${bus.busNo}</span>
+                        <span class="distance-badge">${bus.distance.toFixed(2)} km</span>
+                    </div>
+                    <div class="list-item-detail">
+                        🚌 Route: ${bus.routeName || bus.routeNo}<br>
+                        📍 Position: ${bus.latitude.toFixed(4)}, ${bus.longitude.toFixed(4)}
+                        ${bus.speed ? `<br>⚡ Speed: ${Math.round(bus.speed)} km/h` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateTicketDropdowns(stops) {
+            const fromStopSelect = document.getElementById('fromStopSelect');
+            const toStopSelect = document.getElementById('toStopSelect');
+            
+            // Clear existing options (keep first option)
+            fromStopSelect.innerHTML = '<option value="">Select departure stop...</option>';
+            toStopSelect.innerHTML = '<option value="">Select destination stop...</option>';
+            
+            // Add stop options
+            stops.forEach(stop => {
+                const option1 = document.createElement('option');
+                option1.value = stop.name;
+                option1.textContent = `${stop.name} (${stop.distance.toFixed(1)}km)`;
+                fromStopSelect.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = stop.name;
+                option2.textContent = `${stop.name} (${stop.distance.toFixed(1)}km)`;
+                toStopSelect.appendChild(option2);
+            });
+        }
+
+        function generateTicket() {
+            const fromStop = document.getElementById('fromStopSelect').value;
+            const toStop = document.getElementById('toStopSelect').value;
+            const busType = document.getElementById('busTypeSelect').value;
+            
+            if (!fromStop || !toStop) {
+                addLog('❌ Please select both departure and destination stops', 'error');
+                return;
+            }
+            
+            if (fromStop === toStop) {
+                addLog('❌ Departure and destination stops cannot be the same', 'error');
+                return;
+            }
+            
+            const fare = busType === 'ac' ? 25 : 10;
+            const ticketId = 'DTC' + Date.now().toString().slice(-6);
+            const currentTime = new Date().toLocaleString();
+            
+            const ticketPreview = document.getElementById('ticketPreview');
+            ticketPreview.className = 'ticket-preview active';
+            ticketPreview.innerHTML = `
+                <div class="ticket-header">Delhi Transport Corporation</div>
+                <div class="ticket-info">
+                    <span>Ticket ID:</span>
+                    <span>#${ticketId}</span>
+                </div>
+                <div class="ticket-info">
+                    <span>From:</span>
+                    <span>${fromStop}</span>
+                </div>
+                <div class="ticket-info">
+                    <span>To:</span>
+                    <span>${toStop}</span>
+                </div>
+                <div class="ticket-info">
+                    <span>Bus Type:</span>
+                    <span>${busType === 'ac' ? 'AC Bus' : 'Regular Bus'}</span>
+                </div>
+                <div class="ticket-info">
+                    <span>Issue Time:</span>
+                    <span>${currentTime}</span>
+                </div>
+                <div class="ticket-fare">Total Fare: ₹${fare}</div>
+            `;
+            
+            addLog(`🎫 Ticket generated: ${ticketId} (${fromStop} → ${toStop}) - ₹${fare}`, 'success');
+        }
+
+        function updateRadarDisplay(nearestBuses, nearestStops) {
+            const radarContainer = document.getElementById('radarContainer');
+            
+            // Remove existing markers
+            const existingMarkers = radarContainer.querySelectorAll('.bus-marker, .stop-marker');
+            existingMarkers.forEach(marker => marker.remove());
+
+            if (!userLocation) return;
+
+            const maxRange = CONFIG.RADAR_RANGE; // 5km
+            const radarRadius = 150; // pixels
+
+            // Add bus markers
+            nearestBuses.forEach(bus => {
+                if (bus.distance <= maxRange) {
+                    const marker = document.createElement('div');
+                    marker.className = 'bus-marker';
+                    marker.title = `Bus ${bus.busNo} - ${bus.distance.toFixed(2)}km`;
+                    
+                    // Calculate position relative to center
+                    const angle = Math.atan2(
+                        bus.latitude - userLocation.lat,
+                        bus.longitude - userLocation.lng
+                    );
+                    const distance = Math.min(bus.distance / maxRange, 1) * radarRadius;
+                    
+                    const x = 150 + Math.cos(angle) * distance;
+                    const y = 150 + Math.sin(angle) * distance;
+                    
+                    marker.style.left = x + 'px';
+                    marker.style.top = y + 'px';
+                    
+                    radarContainer.appendChild(marker);
+                }
+            });
+
+            // Add stop markers
+            nearestStops.slice(0, 20).forEach(stop => {
+                if (stop.distance <= maxRange) {
+                    const marker = document.createElement('div');
+                    marker.className = 'stop-marker';
+                    marker.title = `${stop.name} - ${stop.distance.toFixed(2)}km`;
+                    
+                    const angle = Math.atan2(
+                        stop.latitude - userLocation.lat,
+                        stop.longitude - userLocation.lng
+                    );
+                    const distance = Math.min(stop.distance / maxRange, 1) * radarRadius;
+                    
+                    const x = 150 + Math.cos(angle) * distance;
+                    const y = 150 + Math.sin(angle) * distance;
+                    
+                    marker.style.left = x + 'px';
+                    marker.style.top = y + 'px';
+                    
+                    radarContainer.appendChild(marker);
+                }
+            });
+        }
+
+        async function updateAllData() {
+            if (!userLocation) {
+                addLog('No location available, getting location first...', 'warning');
+                await getLocationCoordinates();
+            }
+
+            const busDataLoaded = await fetchBusData();
+            const stopsDataLoaded = await fetchStopsData();
+
+            if (busDataLoaded && stopsDataLoaded) {
+                nearestStops = findNearestItems(allStops, CONFIG.MAX_STOPS, userLocation.lat, userLocation.lng);
+                const nearestBuses = findNearestItems(allBuses, CONFIG.MAX_BUSES, userLocation.lat, userLocation.lng);
+
+                updateStopsList(nearestStops);
+                updateBusesList(nearestBuses);
+                updateRadarDisplay(nearestBuses, nearestStops);
+
+                updateStatus(`✅ ${nearestBuses.length} buses, ${nearestStops.length} stops nearby`);
+                addLog(`📊 Updated: ${nearestBuses.length} buses and ${nearestStops.length} stops within ${CONFIG.RADAR_RANGE}km`, 'success');
+            } else {
+                updateStatus('❌ Failed to load data');
+                addLog('❌ Failed to load bus or stops data', 'error');
+            }
+        }
+
+        async function initialize() {
+            addLog('🚀 Initializing Live Bus Tracker...', 'info');
+            updateStatus('Initializing system...', true);
+
+            try {
+                // Get location first
+                await getLocationCoordinates();
+                
+                // Load initial data
+                await updateAllData();
+
+                // Set up auto-refresh
+                if (updateInterval) {
+                    clearInterval(updateInterval);
+                }
+                updateInterval = setInterval(updateAllData, CONFIG.UPDATE_INTERVAL);
+                
+                addLog('✅ Initialization complete - auto-refresh every 15 seconds', 'success');
+                
+            } catch (error) {
+                addLog(`❌ Initialization failed: ${error.message}`, 'error');
+                updateStatus('❌ Initialization failed');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('forceInitBtn').addEventListener('click', () => {
+            addLog('🚨 Emergency initialization triggered', 'warning');
+            initialize();
+        });
+        
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            addLog('🔄 Manual refresh triggered', 'info');
+            updateAllData();
+        });
+        
+        document.getElementById('generateTicketBtn').addEventListener('click', generateTicket);
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            addLog('📱 Mobile app interface loaded', 'info');
+            initialize();
+        });
+    </script>
+</body>
+</html>
